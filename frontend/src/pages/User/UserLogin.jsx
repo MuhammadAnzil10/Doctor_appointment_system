@@ -1,16 +1,36 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLoginMutation } from "../../UserSlices/usersApiSlice.js";
+import { setCredentials } from "../../UserSlices/authSlice.js";
+import {toast} from 'react-toastify';
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
-  const [password , setPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  console.log("useLogin", useLoginMutation());
+  const [login, { isLoading, error }] = useLoginMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
-  const submitHandler = async (event)=>{
-        event.preventDefault();
-      
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
 
-
-  }
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
+    } catch (err) {
+      console.log(err.data.message || err.error);
+      toast.error(err.data.message || err.error);
+    }
+  };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -47,8 +67,9 @@ const UserLogin = () => {
                   placeholder="example@gmail.com"
                   value={email}
                   autoComplete="false"
-                  onChange={e=>{setEmail(e.target.value)}}
-
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                 />
               </div>
               <div>
@@ -64,9 +85,9 @@ const UserLogin = () => {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                   autoComplete="false"
-                   value={password}
-                   onChange={(e)=>setPassword(e.target.value)}
+                  autoComplete="false"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -105,7 +126,7 @@ const UserLogin = () => {
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <Link
-                  to='/register'
+                  to="/register"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Sign up

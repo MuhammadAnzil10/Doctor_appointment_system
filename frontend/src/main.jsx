@@ -5,7 +5,8 @@ import "./index.css";
 import UserHome from "./pages/User/UserHome.jsx";
 import UserLogin from "./pages/User/UserLogin.jsx";
 import UserRegister from "./pages/User/UserRegister.jsx";
-
+import store from './store.js'
+import { Provider } from "react-redux";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,7 +27,9 @@ const router = createBrowserRouter(
 );
 
 ReactDOM.createRoot(document.getElementById("root")).render(
+  <Provider store={store}>
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>
+  </Provider>
 );

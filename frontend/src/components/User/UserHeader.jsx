@@ -1,8 +1,11 @@
 import { FaUserCog } from "react-icons/fa";
 import logo from "../../assets/images/V-care-logo.png";
 import {Link} from 'react-router-dom'
+import { useSelector,useDispatch } from "react-redux";
+import DropDown from "../DropDown";
 
 const UserHeader = () => {
+  const {userInfo} = useSelector((state)=>state.auth)
   return (
     <header>
       <nav className="flex justify-between   bg-blue-500">
@@ -15,16 +18,11 @@ const UserHeader = () => {
             <Link to='/bookings'><li>Bookings</li></Link>
             <Link to='/favourites'><li>Favourites</li></Link>
             <Link to='/profile'>
-            <li>
-              <FaUserCog className=" font-bold text-2xl" /> 
-            </li>
             </Link>
-            <Link to='/login'>
+            {userInfo ?<DropDown userInfo={userInfo} profile={'/profile'} logout={'/logout'} />  :<Link to='/login'>
             <li>Login</li>
-            </Link>
-            <Link to='/logout'>
-            <li>Logout</li>
-            </Link>
+            </Link> }
+           
             
           </ul>
         </div>

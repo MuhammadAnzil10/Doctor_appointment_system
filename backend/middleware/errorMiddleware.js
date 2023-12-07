@@ -8,7 +8,7 @@ console.log('not found');
 }
 
 const errorHandler =(err, req, res, next)=>{
-  console.log('error handler');
+  
   let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   let message = err.message;
 
