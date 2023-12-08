@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import User from "../model/userModel.js";
 import generateToken from "../utils/generateTokens.js";
+import generateMail from "../utils/generateMail.js";
+import generateOtp from "../utils/generateOtp.js";
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -23,16 +25,27 @@ const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
   const userExist = await User.findOne({ email });
-
   if (userExist) {
     res.status(400);
     throw new Error("User already exists");
   }
+
+  const verificationCode = generateOtp();
   const user = await User.create({
     name,
     email,
     password,
+    verificationCode,
   });
+
+  const status = await generateMail(verificationCode, email);
+  if (status?.success) {
+    return res
+      .status(200)
+      .send("User registered successfully. Check your email for verification.");
+  } else if (!status?.success) {
+    return res.status(500).send("Server Temporarily not available");
+  }
 
   if (user) {
     generateToken(res, user._id);
@@ -46,6 +59,23 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid user Data");
   }
 });
+
+
+const verifyOtp = asyncHandler(async(req,res)=>{
+   
+  const {email, verificationCode} = req.body;
+
+  const user = await User.findOne({email,verificationCode})
+
+  if(!user){
+    return res.status(404).send('User not found or invalid verification code.');
+  }
+
+  user.isVerified = true
+  await user.save()
+  return res.status(200).send('Account verified successfully.');
+
+})
 
 const logoutUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
@@ -88,4 +118,4 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { login, registerUser, logoutUser, getUserProfile, updateUserProfile };
+export { login, registerUser, logoutUser, getUserProfile, updateUserProfile, verifyOtp };

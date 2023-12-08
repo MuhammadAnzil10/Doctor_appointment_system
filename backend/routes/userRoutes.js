@@ -5,11 +5,13 @@ import {
   logoutUser,
   updateUserProfile,
   login,
+  verifyOtp
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/register", registerUser);
+router.post("/verify-otp", verifyOtp);
 router.post("/login", login);
 router.post("/logout", logoutUser);
 router
