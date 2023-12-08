@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../../UserSlices/usersApiSlice.js";
 import { setCredentials } from "../../UserSlices/authSlice.js";
 import {toast} from 'react-toastify';
+import ClipLoader from "react-spinners/ClipLoader";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  console.log("useLogin", useLoginMutation());
   const [login, { isLoading, error }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -18,7 +18,10 @@ const UserLogin = () => {
     if (userInfo) {
       navigate("/");
     }
+    
   }, [navigate, userInfo]);
+
+
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -31,6 +34,7 @@ const UserLogin = () => {
       toast.error(err.data.message || err.error);
     }
   };
+ 
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -121,7 +125,9 @@ const UserLogin = () => {
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign in
+              { isLoading ? <ClipLoader
+               color="#ffffff" size={20}
+               /> :  "Sign in"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}

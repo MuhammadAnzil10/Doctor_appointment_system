@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link ,useFetcher,useNavigate} from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
-import { useRegisterMutation } from "../../UserSlices/usersApiSlice.js";
 import { setCredentials } from "../../UserSlices/authSlice.js";
-
-const UserRegister = () => {
+import { useUpdateUserMutation } from "../../UserSlices/usersApiSlice.js";
+const UserProfile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,14 +13,14 @@ const UserRegister = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const {userInfo} = useSelector((state)=>state.auth);
-  const [register,{isLoading}] = useRegisterMutation();
-
+  const [updateProfile,{isLoading}]= useUpdateUserMutation()
 
   useEffect(()=>{
-    if(userInfo){
-      navigate('/')
-    }
-  },[navigate,userInfo])
+    setName(userInfo.name)
+    setEmail(userInfo.email)
+
+    
+  },[userInfo.name,userInfo.email])
 
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -29,15 +28,19 @@ const UserRegister = () => {
     if(password !== confirmPassword){
       toast.error('Passwords do not match');
     }else{
-      try {
-        const res = await register({name,email,password}).unwrap()
-        console.log('ressss',res);
-        dispatch(setCredentials({...res}))
-        navigate('/')
+     try {
+      const res = await updateProfile({
+        _id:userInfo._id,
+        name,
+        email,
+        password
+      }).unwrap();
 
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-      }
+      dispatch(setCredentials({...res}))
+      toast.success("Profile Updated")
+     } catch (error) {
+      toast.error(err?.data?.message || err.message)
+     }
     }
   };
 
@@ -58,7 +61,7 @@ const UserRegister = () => {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign Up to your account
+              Profile
             </h1>
             <form className="space-y-4 md:space-y-6" onSubmit={submitHandler}>
               <div>
@@ -144,17 +147,9 @@ const UserRegister = () => {
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                {isLoading ? <ClipLoader color="#ffffff" size={20} /> : "Sign Up"}
+              {isLoading ? <ClipLoader color="#ffffff" size={20} /> : "Update"}
               </button>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Already have an account ?{" "}
-                <Link
-                  to="/login"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Sign In
-                </Link>
-              </p>
+           
             </form>
           </div>
         </div>
@@ -163,4 +158,4 @@ const UserRegister = () => {
   );
 };
 
-export default UserRegister;
+export default UserProfile;
