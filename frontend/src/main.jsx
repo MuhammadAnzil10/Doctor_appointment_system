@@ -7,6 +7,8 @@ import UserLogin from "./pages/User/UserLogin.jsx";
 import UserRegister from "./pages/User/UserRegister.jsx";
 import UserProfile from "./pages/User/UserProfile.jsx";
 import PrivateRoute from "./components/User/PrivateRoute.jsx";
+import UserOtpPage from "./pages/User/UserOtpPage.jsx";
+import PublicRoute from "./components/User/PublicRoute.jsx";
 import store from "./store.js";
 import { Provider } from "react-redux";
 import {
@@ -22,9 +24,14 @@ const router = createBrowserRouter(
       <Route index={true} path="/" element={<UserHome />} />
       <Route path="/login" element={<UserLogin />} />
       <Route path="/register" element={<UserRegister />} />
+      <Route  element={<PublicRoute />} >
+        <Route path="/verify-otp" element={<UserOtpPage />} />
+      </Route>
+      {/* <Route path="/verify-otp" element={<UserOtpPage />} /> */}
       <Route  path="" element={<PrivateRoute />}>
          <Route path="/profile" element={<UserProfile />} />
       </Route>
+
     </Route>
   )
 );

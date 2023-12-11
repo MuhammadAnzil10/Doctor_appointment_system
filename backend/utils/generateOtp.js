@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
 const generateOtp =()=>{
-  return crypto.randomInt(100000, 999999).toString();
+  return (crypto.randomBytes(2).readUInt16BE() % 10000).toString().padStart(4, '0');
 
 }
 

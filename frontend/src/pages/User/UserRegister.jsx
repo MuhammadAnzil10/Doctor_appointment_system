@@ -1,40 +1,41 @@
 import { useState, useEffect } from "react";
-import { Link ,useFetcher,useNavigate} from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Link, useFetcher, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import { useRegisterMutation } from "../../UserSlices/usersApiSlice.js";
-import { setCredentials } from "../../UserSlices/authSlice.js";
 
 const UserRegister = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const navigate = useNavigate()
-  const dispatch = useDispatch();
-  const {userInfo} = useSelector((state)=>state.auth);
-  const [register,{isLoading}] = useRegisterMutation();
+  const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.auth);
+  const [register, { isLoading }] = useRegisterMutation();
 
-
-  useEffect(()=>{
-    if(userInfo){
-      navigate('/')
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
     }
-  },[navigate,userInfo])
+  }, [navigate, userInfo]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    
-    if(password !== confirmPassword){
-      toast.error('Passwords do not match');
-    }else{
-      try {
-        const res = await register({name,email,password}).unwrap()
-        console.log('ressss',res);
-        dispatch(setCredentials({...res}))
-        navigate('/')
 
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match");
+    } else {
+      try {
+        const res = await register({ name, email, password }).unwrap();
+
+        if (res.status === 200) {
+          toast.success("OTP sent successfully! Check your email.", {
+            autoClose: 3000,
+          });
+          localStorage.setItem("userData", JSON.stringify(res.userData));
+          navigate(`/verify-otp?email=${email}`);
+        }
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }
@@ -144,7 +145,11 @@ const UserRegister = () => {
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                {isLoading ? <ClipLoader color="#ffffff" size={20} /> : "Sign Up"}
+                {isLoading ? (
+                  <ClipLoader color="#ffffff" size={20} />
+                ) : (
+                  "Sign Up"
+                )}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account ?{" "}

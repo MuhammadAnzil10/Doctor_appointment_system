@@ -39,43 +39,42 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   const status = await generateMail(verificationCode, email);
-  if (status?.success) {
-    return res
-      .status(200)
-      .send("User registered successfully. Check your email for verification.");
-  } else if (!status?.success) {
-    return res.status(500).send("Server Temporarily not available");
-  }
 
-  if (user) {
-    generateToken(res, user._id);
-    return res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+  if (status?.success) {
+    return res.status(200).json({
+      message:
+        "User registered successfully. Check your email for verification.",
+      status: 200,
+      userData: {
+        name: user._doc.name,
+        email: user._doc.email,
+      },
     });
-  } else {
-    res.status(400);
-    throw new Error("Invalid user Data");
+  } else if (!status?.success) {
+    res.status(500);
+    throw new Error("Server Temporarily not available");
   }
 });
 
+const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, verificationCode } = req.body;
+  const user = await User.findOne({ email, verificationCode });
 
-const verifyOtp = asyncHandler(async(req,res)=>{
-   
-  const {email, verificationCode} = req.body;
-
-  const user = await User.findOne({email,verificationCode})
-
-  if(!user){
-    return res.status(404).send('User not found or invalid verification code.');
+  if (!user) {
+    res.status(400);
+    throw new Error("Invalid user Data");
   }
 
-  user.isVerified = true
-  await user.save()
-  return res.status(200).send('Account verified successfully.');
-
-})
+  user.isVerified = true;
+  await user.save();
+  generateToken(res, user._id);
+  return res.status(201).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    message: "Account verified successfully.",
+  });
+});
 
 const logoutUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
@@ -118,4 +117,69 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { login, registerUser, logoutUser, getUserProfile, updateUserProfile, verifyOtp };
+const resendOtp = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(400);
+    throw new Error("Invalid User");
+  }
+
+  const verificationCode = generateOtp();
+  const status = await generateMail(verificationCode, user.email);
+
+  if (status.success) {
+    user.verificationCode = verificationCode;
+    await user.save();
+
+    res.status(200).json({
+      message:
+        "Otp resend Successfully Please Check your email for Resend Otp.",
+      status: 200,
+    });
+  } else if (!status?.success) {
+    res.status(500);
+    throw new Error("Server Temporarily not available");
+  }
+});
+
+const forgetPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(400);
+    throw new Error("Invalid user");
+  }
+
+  const verificationCode = generateOtp();
+  const status = await generateMail(verificationCode, user.email);
+
+  if (status.success) {
+    user.verificationCode = verificationCode;
+    await user.save();
+
+    res.status(200).json({
+      message: "Verification OTP sent to email ",
+      status: 200,
+    });
+  } else if (!status?.success) {
+    res.status(500);
+    throw new Error("Server Temporarily not available");
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {});
+
+export {
+  login,
+  registerUser,
+  logoutUser,
+  getUserProfile,
+  updateUserProfile,
+  verifyOtp,
+  resendOtp,
+  forgetPassword,
+  resetPassword,
+};
