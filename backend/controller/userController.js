@@ -193,8 +193,22 @@ const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
 
 });
 
-const resetPassword = asyncHandler(async()=>{
-      
+const resetPassword = asyncHandler(async(req,res)=>{
+          
+        const {email,password}=req.body
+
+        const user = await User.findOne({email})
+        if (user) {
+          user.password=password;
+          await user.save()
+          res.status(200).json({ 
+          _id: user._id,
+          name: user.name,
+          email: user.email, });
+        } else {
+          res.status(404).json({ message: 'User not found' });
+        }
+
        
 })
 
