@@ -159,10 +159,14 @@ const forgetPassword = asyncHandler(async (req, res) => {
   if (status.success) {
     user.verificationCode = verificationCode;
     await user.save();
-
+    
     res.status(200).json({
       message: "Verification OTP sent to email ",
       status: 200,
+      userData:{
+        name:user._doc.name,
+        email:user._doc.email
+      }
     });
   } else if (!status?.success) {
     res.status(500);
@@ -170,7 +174,29 @@ const forgetPassword = asyncHandler(async (req, res) => {
   }
 });
 
-const resetPassword = asyncHandler(async (req, res) => {});
+const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
+
+        const {email,verificationCode}= req.body;
+
+        const user = await User.findOne({email,verificationCode})
+
+        if(!user){
+          res.status(400)
+          throw new Error('Invalid User Data')
+        }
+        user.isVerified = true;
+        await user.save();
+        return res.status(201).json({
+          message: "Otp verified successfully.",
+        });
+
+
+});
+
+const resetPassword = asyncHandler(async()=>{
+      
+       
+})
 
 export {
   login,
@@ -182,4 +208,5 @@ export {
   resendOtp,
   forgetPassword,
   resetPassword,
+  resetPasswordOtpVerify
 };

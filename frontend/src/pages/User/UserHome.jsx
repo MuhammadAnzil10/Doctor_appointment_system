@@ -9,6 +9,9 @@ const UserHome = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    if(localStorage.getItem('userData')){
+      localStorage.removeItem('userData')
+    }
     const isToastShownBefore = localStorage.getItem("isToastShown");
     if (userInfo && !isToastShownBefore) {
       toast.success("Logged in successfully");

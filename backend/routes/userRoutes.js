@@ -8,6 +8,7 @@ import {
   verifyOtp,
   resendOtp,
   forgetPassword,
+  resetPasswordOtpVerify,
   resetPassword
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
@@ -17,7 +18,7 @@ router.post("/register", registerUser);
 router.post("/verify-otp", verifyOtp);
 router.post('/resend-otp',resendOtp)
 router.post('/forget-password',forgetPassword)
-router.put('/reset-password',resetPassword)
+router.route('/reset-password').post(resetPasswordOtpVerify).put(resetPassword)
 router.post("/login", login);
 router.post("/logout", logoutUser);
 router
