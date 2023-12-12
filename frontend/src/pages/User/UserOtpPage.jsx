@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   useVerifyOtpMutation,
   useResendOtpMutation,
+  useResetPasswordOtpMutation
 } from "../../UserSlices/usersApiSlice";
 import { toast } from "react-toastify";
 import { setCredentials } from "../../UserSlices/authSlice";
@@ -12,6 +13,7 @@ import { CircleLoader } from "react-spinners";
 const UserOtpPage = () => {
   const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
   const [resendOtp, { otpIsLoding }] = useResendOtpMutation();
+  const [resetPasswordOtpVerify] = useResetPasswordOtpMutation()
   const [otp, setOtp] = useState([]);
   const [countDown, setCountDown] = useState(60);
   const [resendDisabled, setResendDisabled] = useState(true);
@@ -39,7 +41,7 @@ const UserOtpPage = () => {
 
   const urlSearchParams = new URLSearchParams(window.location.search);
   const email = urlSearchParams.get("email");
-
+  const resetPassword = urlSearchParams.get("forget-password")
   const handleInput = (e, nextInputRef, index) => {
     const currentInput = e.target;
     const inputValue = currentInput.value;
@@ -100,11 +102,19 @@ const UserOtpPage = () => {
     e.preventDefault();
     const verificationCode = otp.join("");
     try {
-      const res = await verifyOtp({ email, verificationCode }).unwrap();
-      const { message, ...rest } = res;
-      dispatch(setCredentials({ ...rest }));
-      toast.success(message);
-      navigate("/");
+      if(!resetPassword){
+        const res = await verifyOtp({ email, verificationCode }).unwrap();
+        const { message, ...rest } = res;
+        dispatch(setCredentials({ ...rest }));
+        toast.success(message);
+        navigate("/");
+        return
+      }
+      const res = await resetPasswordOtpVerify({email,verificationCode}).unwrap()
+      if(res?.status === 200){
+       toast.success(res.message)
+        navigate('/reset-password')
+      }
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }

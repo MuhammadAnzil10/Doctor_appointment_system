@@ -177,7 +177,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
 const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
 
         const {email,verificationCode}= req.body;
-
+       console.log(email,verificationCode);
         const user = await User.findOne({email,verificationCode})
 
         if(!user){
@@ -186,8 +186,9 @@ const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
         }
         user.isVerified = true;
         await user.save();
-        return res.status(201).json({
+        return res.status(200).json({
           message: "Otp verified successfully.",
+          status:200
         });
 
 
@@ -204,9 +205,12 @@ const resetPassword = asyncHandler(async(req,res)=>{
           res.status(200).json({ 
           _id: user._id,
           name: user.name,
-          email: user.email, });
+          email: user.email, 
+          status:200
+        });
         } else {
-          res.status(404).json({ message: 'User not found' });
+          res.status(404)
+          throw new Error("User not found")
         }
 
        

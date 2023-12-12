@@ -13,13 +13,7 @@ const UserLogin = () => {
   const dispatch = useDispatch();
   const [login, { isLoading, error }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-    
-  }, [navigate, userInfo]);
+   
 
 
 
@@ -115,7 +109,7 @@ const UserLogin = () => {
                   </div>
                 </div>
                 <Link
-                  to="/"
+                  to="/forget-password"
                   className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Forgot password?

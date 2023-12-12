@@ -16,9 +16,7 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 connectDB();
 
 app.use("/api/users", userRoutes);
-app.get("/", (req, res) => {
-  return res.send("running");
-});
+
 
 app.use(notFound);
 app.use(errorHandler);

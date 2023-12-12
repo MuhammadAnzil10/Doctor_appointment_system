@@ -44,7 +44,29 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method:"POST",
         body:{email}
       })
+    }),
+    forgetPassword:builder.mutation({
+      query:({email})=>({
+        url: `${USERS_URL}/forget-password`,
+        method:"POST",
+        body:{email}
+      })
+    }),
+    resetPasswordOtp:builder.mutation({
+      query:({email,verificationCode})=>({
+        url: `${USERS_URL}/reset-password`,
+        method:"POST",
+        body:{email,verificationCode}
+      })
+    }),
+    resetPassword:builder.mutation({
+      query:({email,password})=>({
+        url: `${USERS_URL}/reset-password`,
+        method:"PUT",
+        body:{email,password}
+      })
     })
+
   }),
 });
 
@@ -54,5 +76,8 @@ export const {
   useRegisterMutation,
   useUpdateUserMutation,
   useVerifyOtpMutation,
-  useResendOtpMutation
+  useResendOtpMutation,
+  useForgetPasswordMutation,
+  useResetPasswordOtpMutation,
+  useResetPasswordMutation
 } = usersApiSlice;

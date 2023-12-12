@@ -1,11 +1,11 @@
-import { Route,Outlet } from "react-router-dom"
+import { Route,Outlet,Navigate } from "react-router-dom"
+import { useSelector } from "react-redux"
 
 
-
-const PublicRoute =({children})=>{
-let user = false
-
-  return user ? <h1>Haiii</h1> : (<Outlet/>)
+const PublicRoute =()=>{
+ 
+const {userInfo} = useSelector((state)=>state.auth)
+  return userInfo ? <Navigate to='/' replace /> : (<Outlet/>)
 }
 
 
