@@ -8,6 +8,9 @@ import { useRegisterMutation } from "../../UserSlices/usersApiSlice.js";
 const UserRegister = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [age,setAge] = useState('')
+  const [phone,setPhone] = useState('')
+  const [bloodGroup,setBloodGroup] = useState('')
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
@@ -21,13 +24,14 @@ const UserRegister = () => {
   }, [navigate, userInfo]);
 
   const submitHandler = async (event) => {
+
     event.preventDefault();
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
     } else {
       try {
-        const res = await register({ name, email, password }).unwrap();
+        const res = await register({ name, email, phone, password, age, bloodGroup }).unwrap();
 
         if (res.status === 200) {
           toast.success("OTP sent successfully! Check your email.", {
@@ -43,7 +47,7 @@ const UserRegister = () => {
   };
 
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 pt-12">
+    <section className="bg-gray-50 dark:bg-gray-900 pt-12 p-4">
       <div className=" flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <Link
           to="#"
@@ -101,7 +105,69 @@ const UserRegister = () => {
                     setEmail(e.target.value);
                   }}
                 />
+                  <div>
+                <label
+                  htmlFor="age"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your age
+                </label>
+                <input
+                  type="number"
+                  name="age"
+                  id="age"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="age 23"
+                  value={age}
+                  autoComplete="false"
+                  onChange={(e) => {
+                    setAge(e.target.value);
+                  }}
+                />
               </div>
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your Phone
+                </label>
+                <input
+                  type="number"
+                  name="phone"
+                  id="phone"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="90*********"
+                  value={phone}
+                  autoComplete="false"
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                  }}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="bloodGroup"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your Blood Group
+                </label>
+                <input
+                  type="text"
+                  name="bloodGroup"
+                  id="bloodGroup"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="AB+"
+                  value={bloodGroup}
+                  autoComplete="false"
+                  onChange={(e) => {
+                    setBloodGroup(e.target.value);
+                  }}
+                />
+              </div>
+
+
               <div>
                 <label
                   htmlFor="password"

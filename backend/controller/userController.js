@@ -22,9 +22,9 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email,phone, age, password, bloodGroup } = req.body;
 
-  const userExist = await User.findOne({ email });
+  const userExist = await User.findOne({ $or:[{email},{phone}] });
   if (userExist) {
     res.status(400);
     throw new Error("User already exists");
@@ -34,7 +34,10 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     name,
     email,
+    phone,
+    age,
     password,
+    bloodGroup,
     verificationCode,
   });
 

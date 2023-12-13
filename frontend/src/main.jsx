@@ -25,6 +25,7 @@ import {
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import Dashboard from "./pages/Admin/Dashboard.jsx";
 import AdminPublicRoute from "./components/Admin/AdminPublicRoute.jsx";
+import UsersLists from "./pages/Admin/UsersLists.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="" element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/users" element={<UsersLists />} />
       </Route>
     </>
   )

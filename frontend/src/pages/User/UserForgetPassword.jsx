@@ -13,14 +13,18 @@ const [forgetPassword,{isLoading}] = useForgetPasswordMutation()
 
   const submitHandler =async (e)=>{
     e.preventDefault();
-    
-    const res = await forgetPassword({email}).unwrap()
-   if(res?.status === 200){
-    toast.success("Check your mail for verification code")
-    localStorage.setItem('userData',JSON.stringify(res.userData))
-    navigate(`/verify-otp?email=${email}&forget-password=${true}`)
-   }
-
+    try {
+      const res = await forgetPassword({email}).unwrap()
+      if(res?.status === 200){
+       toast.success("Check your mail for verification code")
+       localStorage.setItem('userData',JSON.stringify(res.userData))
+       navigate(`/verify-otp?email=${email}&forget-password=${true}`)
+      }
+   
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+   
   }
 
 

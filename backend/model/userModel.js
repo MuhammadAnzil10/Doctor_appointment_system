@@ -11,6 +11,18 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    phone:{
+        type:Number,
+        required:true
+    },
+    age:{
+      type:Number,
+      required:true
+    },
+    bloodGroup:{
+       type:String,
+      
+    },
     password: {
       type: String,
       required: true,
@@ -18,6 +30,10 @@ const userSchema = mongoose.Schema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+    isBlocked:{
+      type:Boolean,
+      default:false
     },
     verificationCode: String,
   },

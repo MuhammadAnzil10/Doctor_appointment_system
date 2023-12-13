@@ -17,7 +17,13 @@ export const adminApiSlices = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    getAllUsers:builder.mutation({
+      query:()=>({
+          url:`${ADMIN_URL}/users`,
+          method:"GET"
+      })
+    })
   }),
 });
 
-export const { useAdminLoginMutation, useAdminLogoutMutation } = adminApiSlices;
+export const { useAdminLoginMutation, useAdminLogoutMutation, useGetAllUsersMutation } = adminApiSlices;
