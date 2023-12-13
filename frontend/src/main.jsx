@@ -24,6 +24,7 @@ import {
 } from "react-router-dom";
 import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import Dashboard from "./pages/Admin/Dashboard.jsx";
+import AdminPublicRoute from "./components/Admin/AdminPublicRoute.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,12 +42,13 @@ const router = createBrowserRouter(
           <Route path="/profile" element={<UserProfile />} />
         </Route>
       </Route>
-      <Route path="/admin" element={<AdminLayout/>}>
-        <Route index={true} path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/dashboard"  element={<Dashboard />}/>
-        
+      <Route path="" element={<AdminPublicRoute />}>
+        <Route path="/admin" element={<AdminLogin />} />
       </Route>
-      </>
+      <Route path="" element={<AdminLayout />}>
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+      </Route>
+    </>
   )
 );
 
