@@ -1,14 +1,31 @@
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken'
-import adminModal from '../model/adminModel.js';
+import Admin from '../model/adminModel.js';
 
 
-const adminProtect = (res,adminId)=>{
+const adminProtect =asyncHandler( async(req,res,next)=>{
 
-  const token = req.cookies.adminToke
-  console.log(token);
 
-}
+  const token = req.cookies.adminToken;
+console.log(token);
+  if(token){
+    try {
+      const decoded =  jwt.verify(token,process.env.ADMIN_JWT_SECRET)
+      
+      req.admin = await Admin.findById(decoded.userId).select("-password");
+
+      next();
+    } catch (error) {
+      res.status(401);
+      throw new Error("Not authorized, invalid token");
+    }
+
+  }else{
+    res.status(401);
+    throw new Error("Not Authorised, no token");
+  }
+
+})
 
 
 

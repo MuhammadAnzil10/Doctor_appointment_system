@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler'
 import Admin from '../model/adminModel.js'
 import generateAdminToken from '../utils/adminToken.js'
+import User from '../model/userModel.js'
 
 
 
@@ -41,8 +42,9 @@ const adminLogout = asyncHandler(async (req, res) => {
 
 
 const getAllUsers = asyncHandler(async(req,res)=>{
-
-
+   
+     const users = await User.find()
+     res.status(200).json(users)
 })
 
 export {
