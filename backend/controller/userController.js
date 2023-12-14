@@ -180,7 +180,7 @@ const forgetPassword = asyncHandler(async (req, res) => {
 const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
 
         const {email,verificationCode}= req.body;
-       console.log(email,verificationCode);
+      
         const user = await User.findOne({email,verificationCode})
 
         if(!user){

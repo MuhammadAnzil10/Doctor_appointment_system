@@ -12,7 +12,7 @@ const UserLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [login, { isLoading, error }] = useLoginMutation();
-  const { userInfo } = useSelector((state) => state.auth);
+
    
 
 

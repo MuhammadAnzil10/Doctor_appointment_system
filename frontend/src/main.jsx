@@ -26,6 +26,8 @@ import AdminLayout from "./components/Admin/AdminLayout.jsx";
 import Dashboard from "./pages/Admin/Dashboard.jsx";
 import AdminPublicRoute from "./components/Admin/AdminPublicRoute.jsx";
 import UsersLists from "./pages/Admin/UsersLists.jsx";
+import AdminForgetPassword from "./pages/Admin/AdminForgetPassword.jsx";
+import AdminOtpPage from "./pages/Admin/AdminOtpPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,6 +47,8 @@ const router = createBrowserRouter(
       </Route>
       <Route path="" element={<AdminPublicRoute />}>
         <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
+        <Route path="/admin/verify-otp" element={<AdminOtpPage />} />
       </Route>
       <Route path="" element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />

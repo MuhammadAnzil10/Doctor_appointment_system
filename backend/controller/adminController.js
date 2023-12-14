@@ -38,55 +38,48 @@ const getAllUsers = asyncHandler(async (req, res) => {
   res.status(200).json(users);
 });
 
-
-const blockUser =asyncHandler(async(req,res)=>{
-    
-
-   const id = req.params.id;
-   const user = await User.findById(id)
-   if(!user){
-    res.status(401)
-    throw new Error('User not found')
-   }
-   user.isBlocked = true
-   user.save()
-
-   res.status(200)
-   res.json({
-    message:"User Blocked Successfully",
-    isBlocked:true
-   })
-})
-
-const unBlockUser =asyncHandler(async(req,res)=>{
-    
-
+const blockUser = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const user = await User.findById(id)
-  if(!user){
-   res.status(401)
-   throw new Error('User not found')
+  const user = await User.findById(id);
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
   }
-  user.isBlocked = false
-  user.save()
+  user.isBlocked = true;
+  user.save();
 
-  res.status(200)
+  res.status(200);
   res.json({
-   message:"User Unblocked Successfully",
-   isUnBlocked:true
-  })
-})
+    message: "User Blocked Successfully",
+    isBlocked: true,
+  });
+});
 
-const forgetPassword= asyncHandler(async(req,res)=>{
+const unBlockUser = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const user = await User.findById(id);
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+  user.isBlocked = false;
+  user.save();
 
+  res.status(200);
+  res.json({
+    message: "User Unblocked Successfully",
+    isUnBlocked: true,
+  });
+});
 
-  const {email} = req.body;
+const forgetPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
 
-  const admin = await Admin.findOne({email})
+  const admin = await Admin.findOne({ email });
 
-  if(!admin){
-     res.status(401)
-     throw new Error("Invalid User")
+  if (!admin) {
+    res.status(401);
+    throw new Error("Invalid User");
   }
 
   const verificationCode = generateOtp();
@@ -94,27 +87,69 @@ const forgetPassword= asyncHandler(async(req,res)=>{
   if (status.success) {
     admin.verificationCode = verificationCode;
     await admin.save();
-    
+
     res.status(200).json({
       message: "Verification OTP sent to email ",
       status: 200,
-      adminData:{
-        name:admin._doc.name,
-        email:admin._doc.email
-      }
+      adminData: {
+        name: admin._doc.name,
+        email: admin._doc.email,
+      },
     });
   } else if (!status?.success) {
     res.status(500);
     throw new Error("Server Temporarily not available");
   }
+});
+
+const verifyOtp = asyncHandler(async (req, res) => {
+  const { verificationCode, email } = req.body;
+
+  const admin = await Admin.findOne({ email, verificationCode });
+
+  if (!admin) {
+    res.status(400);
+    throw new Error("Invalid admin Data");
+  }
+  admin.isVerified = true;
+  await admin.save();
+  return res.status(200).json({
+    message: "Otp verified successfully.",
+    status: 200,
+  });
+});
+
+
+const resetAdminPassword = asyncHandler(async(req,res)=>{
+
+  
+  const {email,password} = req.body
+
+  const admin = await Admin.findOne({email})
+
+  if (admin) {
+    admin.password=password;
+    await admin.save()
+    res.status(200).json({ 
+    _id: admin._id,
+    name: admin.name,
+    email: admin.email, 
+    status:200
+  });
+  } else {
+    res.status(404)
+    throw new Error("User not found")
+  }
+
 
 })
-
-const verifyOtp =()=>{
-
-}
-
-
-
-
-export { adminLogin, adminLogout, getAllUsers, blockUser, unBlockUser, forgetPassword, verifyOtp };
+export {
+  adminLogin,
+  adminLogout,
+  getAllUsers,
+  blockUser,
+  unBlockUser,
+  forgetPassword,
+  verifyOtp,
+  resetAdminPassword
+};

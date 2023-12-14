@@ -34,6 +34,28 @@ export const adminApiSlices = apiSlice.injectEndpoints({
         url:`${ADMIN_URL}/user-unblock/${id}`,
         method:"GET"
       })
+    }),
+    adminForgetPassword:builder.mutation({
+      query:(data)=>({
+          url:`${ADMIN_URL}/forget-password`,
+          method:"POST",
+          body:data
+      })
+    }),
+    adminVerifyOtp:builder.mutation({
+      query:(data)=>({
+          url:`${ADMIN_URL}/otp-verify`,
+          method:"POST",
+          body:data
+
+      })
+    }),
+    adminResetPassword:builder.mutation({
+      query:(data)=>({
+          url:`${ADMIN_URL}/reset-password`,
+          method:"POST",
+          body:data
+      })
     })
   }),
 });
@@ -43,5 +65,8 @@ export const {
   useAdminLogoutMutation,
   useGetAllUsersMutation,
   useBlockUserMutation,
-  useUnBlockUserMutation
+  useUnBlockUserMutation,
+  useAdminForgetPasswordMutation,
+  useAdminVerifyOtpMutation,
+  useAdminResetPasswordMutation
 } = adminApiSlices;
