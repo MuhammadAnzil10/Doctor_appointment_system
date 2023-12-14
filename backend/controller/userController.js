@@ -205,6 +205,7 @@ const resetPassword = asyncHandler(async(req,res)=>{
         if (user) {
           user.password=password;
           await user.save()
+          generateToken(res,user._id)
           res.status(200).json({ 
           _id: user._id,
           name: user.name,

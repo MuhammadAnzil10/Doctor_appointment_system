@@ -130,6 +130,7 @@ const resetAdminPassword = asyncHandler(async(req,res)=>{
   if (admin) {
     admin.password=password;
     await admin.save()
+    generateAdminToken(res,admin._id)
     res.status(200).json({ 
     _id: admin._id,
     name: admin.name,

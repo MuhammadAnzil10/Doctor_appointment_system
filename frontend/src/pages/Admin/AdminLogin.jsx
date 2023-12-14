@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setAdminCredential } from "../../AdminSlices/adminAuthSlice.js";
 import { toast } from "react-toastify";
 import { useAdminLoginMutation } from "../../AdminSlices/adminApiSlice";
+import { CircleLoader } from "react-spinners";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -79,7 +80,8 @@ const AdminLogin = () => {
                       <circle cx="8.5" cy="7" r="4" />
                       <path d="M20 8v6M23 11h-6" />
                     </svg>
-                    <span className="ml-3">Sign In</span>
+                    {isLoading ? <CircleLoader  color="#ffffff" size={20} /> : (<span className="ml-3">Sign In</span>) }
+                    
                   </button>
                 </form>
                <Link to='/admin/forget-password'> <span className="text-blue-400 hover:underline">Forget Password</span></Link>

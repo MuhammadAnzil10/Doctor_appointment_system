@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAdminVerifyOtpMutation } from "../../AdminSlices/adminApiSlice";
+import { useNavigate } from "react-router-dom";
 
 const AdminOtpPage = () => {
   const [otp, setOtp] = useState([]);
@@ -8,6 +9,7 @@ const AdminOtpPage = () => {
   const inputeRef2 = useRef();
   const inputeRef3 = useRef();
   const inputeRef4 = useRef();
+  const navigate = useNavigate()
   const [adminOtpVerify] = useAdminVerifyOtpMutation()
   const urlSearchParams = new URLSearchParams(window.location.search);
   const email = urlSearchParams.get("email");
@@ -48,7 +50,7 @@ const AdminOtpPage = () => {
     
       if (res?.status === 200) {
         toast.success(res.message);
-      
+        navigate('/admin/reset-password')
       }
     } catch (err) {
       toast.error(err?.data?.message || err.error);

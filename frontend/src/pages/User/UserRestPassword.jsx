@@ -1,45 +1,43 @@
 import { useState } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
-import {useDispatch} from 'react-redux';
+import { useDispatch } from "react-redux";
 import { setCredentials } from "../../UserSlices/authSlice.js";
-import {toast} from 'react-toastify'
+import { toast } from "react-toastify";
 import { useResetPasswordMutation } from "../../UserSlices/usersApiSlice.js";
 
+const UserResetPassword = () => {
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      return toast.error("Password not match");
+    }
 
-const UserResetPassword =()=>{
-const [confirmPassword,setConfirmPassword]=useState('')
-const [resetPassword,{isLoading}] = useResetPasswordMutation()
-const [password, setPassword] = useState('');
-const navigate = useNavigate()
-const dispatch = useDispatch()
-
-const submitHandler =async(e)=>{
-  e.preventDefault()
-  if(password !== confirmPassword){
-   return toast.error('Password not match')
-  }
-  
-  const user = JSON.parse(localStorage.getItem('userData'))
-  if(!user){
-    toast.error('Error occured while processing credential Provide mail')
-  return navigate('/forget-password')
-  }
-   const {email} = user
-  const res = await resetPassword({email,password}).unwrap()
-  const {status,...rest} = res
-  if(res?.status === 200){
-    dispatch(setCredentials({...rest}))
-    toast.success('Password Updated Successfullt')
-    navigate("/");
-    return
-
-  }
-  
-
-}
-
+    const user = JSON.parse(localStorage.getItem("userData"));
+    if (!user) {
+      toast.error("Error occured while processing credential Provide mail");
+      return navigate("/forget-password");
+    }
+    const { email } = user;
+    try {
+      const res = await resetPassword({ email, password }).unwrap();
+      const { status, ...rest } = res;
+      if (res?.status === 200) { 
+        dispatch(setCredentials({ ...rest }));
+        toast.success("Password Updated Successfullt");
+        navigate("/");
+        return;
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err?.error)
+    }
+  };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900 ">
@@ -77,7 +75,6 @@ const submitHandler =async(e)=>{
                   value={password}
                   autoComplete="false"
                   onChange={(e) => {
-                 
                     setPassword(e.target.value);
                   }}
                 />
@@ -98,7 +95,6 @@ const submitHandler =async(e)=>{
                   value={confirmPassword}
                   autoComplete="false"
                   onChange={(e) => {
-                 
                     setConfirmPassword(e.target.value);
                   }}
                 />
@@ -107,18 +103,14 @@ const submitHandler =async(e)=>{
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-              { isLoading ? <ClipLoader
-               color="#ffffff" size={20}
-               /> :  "Reset"}
+                {isLoading ? <ClipLoader color="#ffffff" size={20} /> : "Reset"}
               </button>
             </form>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
+};
 
-}
-
-
-export default UserResetPassword
+export default UserResetPassword;
