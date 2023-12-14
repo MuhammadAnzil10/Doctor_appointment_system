@@ -4,6 +4,8 @@ import generateAdminToken from "../utils/adminToken.js";
 import User from "../model/userModel.js";
 import generateOtp from "../utils/generateOtp.js";
 import generateMail from "../utils/generateMail.js";
+import Specialization from "../model/specialization.js";
+import mongoose from "mongoose";
 
 const adminLogin = asyncHandler(async (req, res) => {
   let { email, password } = req.body;
@@ -119,31 +121,59 @@ const verifyOtp = asyncHandler(async (req, res) => {
   });
 });
 
+const resetAdminPassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-const resetAdminPassword = asyncHandler(async(req,res)=>{
-
-  
-  const {email,password} = req.body
-
-  const admin = await Admin.findOne({email})
+  const admin = await Admin.findOne({ email });
 
   if (admin) {
-    admin.password=password;
-    await admin.save()
-    generateAdminToken(res,admin._id)
-    res.status(200).json({ 
-    _id: admin._id,
-    name: admin.name,
-    email: admin.email, 
-    status:200
-  });
+    admin.password = password;
+    await admin.save();
+    generateAdminToken(res, admin._id);
+    res.status(200).json({
+      _id: admin._id,
+      name: admin.name,
+      email: admin.email,
+      status: 200,
+    });
   } else {
-    res.status(404)
-    throw new Error("User not found")
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+const addSpecialization = asyncHandler(async (req, res) => {
+  const { name, description } = req.body;
+
+  let specializationRegx = new RegExp(name, "i");
+  console.log(specializationRegx);
+  const specialization = await Specialization.findOne({
+    name: specializationRegx,
+  });
+
+  console.log(specialization);
+
+  if (specialization) {
+    res.status(409);
+    throw new Error("Specialixation already existing");
   }
 
+  const newSpecialization = await Specialization.create({
+    name,
+    description,
+  });
 
-})
+  res.status(200).json({
+    message: "Specialization created...",
+    data: newSpecialization,
+  });
+});
+
+const getAllSpecialization = asyncHandler(async (req, res) => {
+  const specializations = await Specialization.find().select("-isBlocked");
+  res.status(200).json(specializations);
+});
+
 export {
   adminLogin,
   adminLogout,
@@ -152,5 +182,7 @@ export {
   unBlockUser,
   forgetPassword,
   verifyOtp,
-  resetAdminPassword
+  resetAdminPassword,
+  addSpecialization,
+  getAllSpecialization,
 };

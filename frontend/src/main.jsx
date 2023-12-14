@@ -29,6 +29,9 @@ import UsersLists from "./pages/Admin/UsersLists.jsx";
 import AdminForgetPassword from "./pages/Admin/AdminForgetPassword.jsx";
 import AdminOtpPage from "./pages/Admin/AdminOtpPage.jsx";
 import AdminResetPassword from "./pages/Admin/AdminResetPassord.jsx";
+import DoctorRegistration from "./pages/Doctor/DoctorRegistration.jsx";
+import Specialization from "./pages/Admin/Specialization.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -48,14 +51,20 @@ const router = createBrowserRouter(
       </Route>
       <Route path="" element={<AdminPublicRoute />}>
         <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
+        <Route
+          path="/admin/forget-password"
+          element={<AdminForgetPassword />}
+        />
         <Route path="/admin/verify-otp" element={<AdminOtpPage />} />
         <Route path="/admin/reset-password" element={<AdminResetPassword />} />
       </Route>
       <Route path="" element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/users" element={<UsersLists />} />
+        <Route path="/admin/specialization" element={<Specialization />} />
       </Route>
+
+     <Route  path="/doctor/register" element={<DoctorRegistration />}></Route>
     </>
   )
 );

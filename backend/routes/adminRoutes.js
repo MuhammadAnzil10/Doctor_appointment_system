@@ -7,7 +7,9 @@ import {
   unBlockUser,
   forgetPassword,
   verifyOtp,
-  resetAdminPassword
+  resetAdminPassword,
+  addSpecialization,
+  getAllSpecialization
 } from "../controller/adminController.js";
 import { adminProtect } from "../middleware/adminAuthMiddleware.js";
 const router = express.Router();
@@ -20,5 +22,7 @@ router.post('/reset-password',resetAdminPassword)
 router.route("/users").get(adminProtect, getAllUsers);
 router.get("/user-block/:id", adminProtect, blockUser);
 router.get("/user-unblock/:id", adminProtect, unBlockUser);
+router.post("/specialization", adminProtect, addSpecialization);
+router.get("/specializations", adminProtect, getAllSpecialization);
 
 export default router;
