@@ -15,7 +15,7 @@ return new Promise((resolve , reject)=>{
     }
 });
 const mailOptions = {
-  from:'muhammadanzil200@gmail.com',
+  from:process.env.FROM_EMAIL,
   to:email,
   subject: 'Account Verification',
   text: `Your verification code is: ${verificationCode}`,

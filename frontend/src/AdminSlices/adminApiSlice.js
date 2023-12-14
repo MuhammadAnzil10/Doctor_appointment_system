@@ -17,13 +17,31 @@ export const adminApiSlices = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
-    getAllUsers:builder.mutation({
-      query:()=>({
-          url:`${ADMIN_URL}/users`,
-          method:"GET"
+    getAllUsers: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/users`,
+        method: "GET",
+      }),
+    }),
+    blockUser: builder.mutation({
+      query: (id) => ({
+        url: `${ADMIN_URL}/user-block/${id}`,
+        method: "GET",
+      }),
+    }),
+    unBlockUser:builder.mutation({
+      query:(id)=>({
+        url:`${ADMIN_URL}/user-unblock/${id}`,
+        method:"GET"
       })
     })
   }),
 });
 
-export const { useAdminLoginMutation, useAdminLogoutMutation, useGetAllUsersMutation } = adminApiSlices;
+export const {
+  useAdminLoginMutation,
+  useAdminLogoutMutation,
+  useGetAllUsersMutation,
+  useBlockUserMutation,
+  useUnBlockUserMutation
+} = adminApiSlices;

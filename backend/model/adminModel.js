@@ -19,10 +19,12 @@ const adminSchema = mongoose.Schema({
     type:Boolean,
     default:true
   },
+  verificationCode:String,
   createdAt:{
     type:Date,
     default:Date.now
-  }
+  },
+ 
 
 })
 

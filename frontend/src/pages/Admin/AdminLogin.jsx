@@ -17,6 +17,7 @@ const AdminLogin = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (email === "" || !emailRegex.test(email)) {
+      
       return toast.error("Please enter valid email");
     }
     if (password === "") {
