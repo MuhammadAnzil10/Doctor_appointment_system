@@ -146,16 +146,14 @@ const addSpecialization = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
   let specializationRegx = new RegExp(name, "i");
-  console.log(specializationRegx);
+
   const specialization = await Specialization.findOne({
     name: specializationRegx,
   });
 
-  console.log(specialization);
-
   if (specialization) {
     res.status(409);
-    throw new Error("Specialixation already existing");
+    throw new Error("Specialization already existing");
   }
 
   const newSpecialization = await Specialization.create({
@@ -170,7 +168,7 @@ const addSpecialization = asyncHandler(async (req, res) => {
 });
 
 const getAllSpecialization = asyncHandler(async (req, res) => {
-  const specializations = await Specialization.find().select("-isBlocked");
+  const specializations = await Specialization.find()
   res.status(200).json(specializations);
 });
 

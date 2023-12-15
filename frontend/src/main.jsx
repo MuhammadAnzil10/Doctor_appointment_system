@@ -31,6 +31,7 @@ import AdminOtpPage from "./pages/Admin/AdminOtpPage.jsx";
 import AdminResetPassword from "./pages/Admin/AdminResetPassord.jsx";
 import DoctorRegistration from "./pages/Doctor/DoctorRegistration.jsx";
 import Specialization from "./pages/Admin/Specialization.jsx";
+import SpecializationList from "./pages/Admin/SpecializationsList.jsx";
 
 
 const router = createBrowserRouter(
@@ -61,6 +62,8 @@ const router = createBrowserRouter(
       <Route path="" element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/users" element={<UsersLists />} />
+
+        <Route path="/admin/specializations" element={<SpecializationList />} />
         <Route path="/admin/specialization" element={<Specialization />} />
       </Route>
 

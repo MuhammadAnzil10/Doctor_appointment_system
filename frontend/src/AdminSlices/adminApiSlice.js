@@ -56,6 +56,19 @@ export const adminApiSlices = apiSlice.injectEndpoints({
           method:"POST",
           body:data
       })
+    }),
+    addSepcialization:builder.mutation({
+      query:(data)=>({
+       url:`${ADMIN_URL}/specialization`,
+       method:"POST",
+       body:data
+      })
+    }),
+    getAllSpecialization:builder.query({
+      query:()=>({
+        url:`${ADMIN_URL}/specializations`,
+        method:"GET"
+      })
     })
   }),
 });
@@ -68,5 +81,8 @@ export const {
   useUnBlockUserMutation,
   useAdminForgetPasswordMutation,
   useAdminVerifyOtpMutation,
-  useAdminResetPasswordMutation
+  useAdminResetPasswordMutation,
+  useAddSepcializationMutation,
+  useGetAllSpecializationQuery
+
 } = adminApiSlices;
