@@ -32,11 +32,14 @@ import AdminResetPassword from "./pages/Admin/AdminResetPassord.jsx";
 import DoctorRegistration from "./pages/Doctor/DoctorRegistration.jsx";
 import Specialization from "./pages/Admin/Specialization.jsx";
 import SpecializationList from "./pages/Admin/SpecializationsList.jsx";
-
+import DoctorLayout from "./components/Doctor/DoctorLayout.jsx";
+import DoctorHome from "./pages/Doctor/DoctorHome.jsx";
+import DoctorLogin from "./pages/Doctor/DoctorLogin.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+    {/* User Routes */}
       <Route path="/" element={<App />}>
         <Route index={true} path="/" element={<UserHome />} />
         <Route element={<PublicRoute />}>
@@ -50,6 +53,9 @@ const router = createBrowserRouter(
           <Route path="/profile" element={<UserProfile />} />
         </Route>
       </Route>
+
+       {/* Admin Routes */}
+
       <Route path="" element={<AdminPublicRoute />}>
         <Route path="/admin" element={<AdminLogin />} />
         <Route
@@ -62,12 +68,17 @@ const router = createBrowserRouter(
       <Route path="" element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/users" element={<UsersLists />} />
-
         <Route path="/admin/specializations" element={<SpecializationList />} />
         <Route path="/admin/specialization" element={<Specialization />} />
       </Route>
 
-     <Route  path="/doctor/register" element={<DoctorRegistration />}></Route>
+     {/* Doctor Routes */}
+
+      <Route path="/doctor/register" element={<DoctorRegistration />} />
+      <Route path="/doctor/login" element={<DoctorLogin />} />
+      <Route path="/doctor" element={<DoctorLayout />}>
+        <Route index={true} path="/doctor" element={<DoctorHome />} />
+      </Route>
     </>
   )
 );

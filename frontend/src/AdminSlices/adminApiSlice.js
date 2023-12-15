@@ -69,6 +69,11 @@ export const adminApiSlices = apiSlice.injectEndpoints({
         url:`${ADMIN_URL}/specializations`,
         method:"GET"
       })
+    }),
+    getAllDoctors:builder.query({
+      query:()=>{
+       url:`${ADMIN_URL}/doctors`
+      }
     })
   }),
 });
