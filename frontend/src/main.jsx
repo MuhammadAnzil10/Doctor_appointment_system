@@ -35,6 +35,7 @@ import SpecializationList from "./pages/Admin/SpecializationsList.jsx";
 import DoctorLayout from "./components/Doctor/DoctorLayout.jsx";
 import DoctorHome from "./pages/Doctor/DoctorHome.jsx";
 import DoctorLogin from "./pages/Doctor/DoctorLogin.jsx";
+import DoctorsLists from "./pages/Admin/DoctorsLists.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -70,6 +71,7 @@ const router = createBrowserRouter(
         <Route path="/admin/users" element={<UsersLists />} />
         <Route path="/admin/specializations" element={<SpecializationList />} />
         <Route path="/admin/specialization" element={<Specialization />} />
+        <Route path="/admin/doctors" element={<DoctorsLists />} />
       </Route>
 
      {/* Doctor Routes */}

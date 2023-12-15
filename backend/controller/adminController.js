@@ -5,7 +5,8 @@ import User from "../model/userModel.js";
 import generateOtp from "../utils/generateOtp.js";
 import generateMail from "../utils/generateMail.js";
 import Specialization from "../model/specialization.js";
-import mongoose from "mongoose";
+import Doctor from "../model/doctorModel.js";
+import generateVerificationMail from "../utils/generateVerificationMail.js";
 
 const adminLogin = asyncHandler(async (req, res) => {
   let { email, password } = req.body;
@@ -168,10 +169,46 @@ const addSpecialization = asyncHandler(async (req, res) => {
 });
 
 const getAllSpecialization = asyncHandler(async (req, res) => {
-  const specializations = await Specialization.find()
+  const specializations = await Specialization.find();
   res.status(200).json(specializations);
 });
 
+const getAllDoctors = asyncHandler(async (req, res) => {
+  const doctors = await Doctor.find().select("-password -__v");
+
+  res.status(200).json(doctors);
+});
+
+const verifyDoctor = asyncHandler(async(req,res)=>{
+
+          const id =req.params.id
+
+          const doctor = await Doctor.findById(id)
+        
+          if(!doctor){
+            res.status(404)
+            throw new Error("User not found")
+          }
+
+         const status = await generateVerificationMail(doctor.email)
+         console.log(status);
+          if (status.success) {
+         
+            doctor.isVerified=true
+            doctor.save()
+
+            res.status(200).json({
+              message: "Verified Successfully",
+              status: 200
+            });
+          } else if (!status?.success) {
+            res.status(500);
+            throw new Error("Server Temporarily not available");
+          }
+         
+
+
+})
 export {
   adminLogin,
   adminLogout,
@@ -183,4 +220,6 @@ export {
   resetAdminPassword,
   addSpecialization,
   getAllSpecialization,
+  getAllDoctors,
+  verifyDoctor
 };

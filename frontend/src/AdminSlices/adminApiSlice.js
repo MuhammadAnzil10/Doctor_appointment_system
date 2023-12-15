@@ -71,9 +71,17 @@ export const adminApiSlices = apiSlice.injectEndpoints({
       })
     }),
     getAllDoctors:builder.query({
-      query:()=>{
-       url:`${ADMIN_URL}/doctors`
-      }
+      query:()=>({
+       url:`${ADMIN_URL}/doctors`,
+       method:"GET",
+      })
+    }),
+    verifyDoctor:builder.mutation({
+      query:(id)=>({
+        url:`${ADMIN_URL}/verify-doctor/${id}`,
+        method:"PUT",
+        body:{id}
+      })
     })
   }),
 });
@@ -88,6 +96,8 @@ export const {
   useAdminVerifyOtpMutation,
   useAdminResetPasswordMutation,
   useAddSepcializationMutation,
-  useGetAllSpecializationQuery
+  useGetAllSpecializationQuery,
+  useGetAllDoctorsQuery,
+  useVerifyDoctorMutation
 
 } = adminApiSlices;
