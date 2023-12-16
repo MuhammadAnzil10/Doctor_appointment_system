@@ -179,36 +179,66 @@ const getAllDoctors = asyncHandler(async (req, res) => {
   res.status(200).json(doctors);
 });
 
-const verifyDoctor = asyncHandler(async(req,res)=>{
+const verifyDoctor = asyncHandler(async (req, res) => {
+  const id = req.params.id;
 
-          const id =req.params.id
+  const doctor = await Doctor.findById(id);
 
-          const doctor = await Doctor.findById(id)
-        
-          if(!doctor){
-            res.status(404)
-            throw new Error("User not found")
-          }
+  if (!doctor) {
+    res.status(404);
+    throw new Error("User not found");
+  }
 
-         const status = await generateVerificationMail(doctor.email)
-         console.log(status);
-          if (status.success) {
-         
-            doctor.isVerified=true
-            doctor.save()
+  const status = await generateVerificationMail(doctor.email);
+  console.log(status);
+  if (status.success) {
+    doctor.isVerified = true;
+    doctor.save();
 
-            res.status(200).json({
-              message: "Verified Successfully",
-              status: 200
-            });
-          } else if (!status?.success) {
-            res.status(500);
-            throw new Error("Server Temporarily not available");
-          }
-         
+    res.status(200).json({
+      message: "Verified Successfully",
+      status: 200,
+    });
+  } else if (!status?.success) {
+    res.status(500);
+    throw new Error("Server Temporarily not available");
+  }
+});
 
+const blockDoctor = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const doctor = await Doctor.findById(id);
+  if (!doctor) {
+    res.status(404);
+    throw new Error("Doctor Not Found");
+  }
 
-})
+  doctor.isBlocked = true;
+  doctor.save();
+  res.status(200);
+  res.json({
+    message: "User Blocked Successfully",
+    isBlocked: true,
+  });
+});
+
+const unBlockDoctor = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const doctor = await Doctor.findById(id);
+
+  if (!doctor) {
+    res.status(404);
+    throw new Error("No User founded");
+  }
+  doctor.isBlocked = false;
+  doctor.save();
+  res.status(200);
+  res.json({
+    message: "User Unblocked Successfully",
+    isUnBlocked: true,
+  });
+});
+
 export {
   adminLogin,
   adminLogout,
@@ -221,5 +251,7 @@ export {
   addSpecialization,
   getAllSpecialization,
   getAllDoctors,
-  verifyDoctor
+  verifyDoctor,
+  blockDoctor,
+  unBlockDoctor,
 };
