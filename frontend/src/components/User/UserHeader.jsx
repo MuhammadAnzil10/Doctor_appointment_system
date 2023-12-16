@@ -25,7 +25,7 @@ const UserHeader = () => {
 
   return (
     <header className="">
-      <nav className="flex justify-between  bg-blue-500 " >
+      <nav className="flex justify-between "   style={{ backgroundColor: "#0a4275" }} >
         <div className="p-2">
           <img src={logo} alt="" className=" w-24 h-16  object-cover" />
         </div>

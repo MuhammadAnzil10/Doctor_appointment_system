@@ -232,7 +232,7 @@ const userGetAllDoctors = asyncHandler(async(req,res)=>{
 const getDoctorById =asyncHandler(async(req,res)=>{
 
   const id = req.params.id
-  const doctor = await Doctor.findById(id).select('-password -__v')
+  const doctor = await Doctor.findById(id).populate('specialization').select('-password -__v')
   if(!doctor){
   res.status(404)
   throw new Error("User not found")

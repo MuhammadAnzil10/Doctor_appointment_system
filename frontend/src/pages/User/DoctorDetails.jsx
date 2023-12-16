@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import { useEffect,useState } from "react";
 import { useUserGetOneDoctorMutation } from "../../UserSlices/usersApiSlice.js";
 import { toast } from "react-toastify";
+import {BarLoader} from 'react-spinners'
+
+
 const DoctorDetails = () => {
   const [doctor,setDoctor] = useState({})
   const [getDoctor,{isLoading}] = useUserGetOneDoctorMutation()
@@ -24,11 +27,14 @@ const DoctorDetails = () => {
     }
   }
 
-
+if(isLoading){
+  return <BarLoader width={100} />
+}
  
   return (
     <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800">
       <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6">
+      
         <div className="flex flex-wrap -mx-4">
           <div className=" px-4 md:w-1/2 h-72  " style={{width:"14rem"}}>
             <div className="sticky top-0 z-50 overflow-hidden w-52">
@@ -51,7 +57,7 @@ const DoctorDetails = () => {
                   {doctor.name} <span className="text-2xl">({doctor.qualification})</span>
                 </h2>
                 <h2 className="max-w-xl mt-2 mb-6 text-2xl font-bold dark:text-gray-400 ">
-                 
+                 {doctor?.specialization?.name}
                 </h2>
                 <div className="flex items-center mb-6">
                   <ul className="flex mr-2">
@@ -117,7 +123,7 @@ const DoctorDetails = () => {
                   </p>
                 </div>
                 <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">
-                  Lorem ispum dor amet Lorem ispum dor amet Lorem ispum dor amet
+                  {doctor?.specialization?.description} <br/>
                   Lorem ispum dor amet Lorem ispum dor amet Lorem ispum dor amet
                   Lorem ispum dor amet Lorem ispum dor amet
                 </p>
