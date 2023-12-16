@@ -65,6 +65,18 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method:"PUT",
         body:{email,password}
       })
+    }),
+    userGetAllDoctor:builder.query({
+      query:()=>({
+        url:`${USERS_URL}/doctors`,
+        method:"GET"
+      })
+    }),
+    userGetOneDoctor:builder.mutation({
+      query:(id)=>({
+        url:`${USERS_URL}/doctor/${id}`,
+        method:"POST",
+      })
     })
 
   }),
@@ -79,5 +91,7 @@ export const {
   useResendOtpMutation,
   useForgetPasswordMutation,
   useResetPasswordOtpMutation,
-  useResetPasswordMutation
+  useResetPasswordMutation,
+  useUserGetAllDoctorQuery,
+  useUserGetOneDoctorMutation
 } = usersApiSlice;

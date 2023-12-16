@@ -1,7 +1,26 @@
 import { Link } from "react-router-dom";
+import { useSelector,useDispatch } from "react-redux";
+import { doctorLogout } from "../../DoctorSlices/DoctorAuthSlice.js";
+import { useLogoutDoctorMutation } from "../../DoctorSlices/doctorApiSlice.js";
+import { toast } from "react-toastify"
+
 
 const DoctorHeader = ()=>{
-  let doctorInfo = false
+ const {doctorInfo} = useSelector((state)=>state.doctorAuth)
+ const [logoutDoctor,{isLoading}] = useLogoutDoctorMutation()
+ const dispatch = useDispatch()
+const handleClick =async(e)=>{
+    e.preventDefault()
+
+    try {
+      await  logoutDoctor()
+      dispatch(doctorLogout())
+    toast.success("Logged out Successfully")
+    } catch (err) {
+      toast.error(err?.data?.message || err.error)
+    }
+}
+
 
   return (
     <div className="header-2">
@@ -35,18 +54,27 @@ const DoctorHeader = ()=>{
           >
             Appointments
           </Link>) }
+
+          {doctorInfo ? (<Link
+           
+            onClick={handleClick}
+            className="p-2 lg:px-4 md:mx-2 text-indigo-600 text-center border border-transparent rounded hover:bg-indigo-100 hover:text-indigo-700 transition-colors duration-300"
+          >
+            Logout
+          </Link>):(
           <Link
             to="/doctor/login"
             className="p-2 lg:px-4 md:mx-2 text-indigo-600 text-center border border-transparent rounded hover:bg-indigo-100 hover:text-indigo-700 transition-colors duration-300"
           >
             Login
-          </Link>
-          <Link
+          </Link>)}
+          {!doctorInfo && 
+          (<Link
             to="/doctor/register"
             className="p-2 lg:px-4 md:mx-2 text-indigo-600 text-center border border-solid border-indigo-600 rounded hover:bg-indigo-600 hover:text-white transition-colors duration-300 mt-1 md:mt-0 md:ml-1"
           >
             Signup
-          </Link>
+          </Link>)}
         </div>
       </div>
     </nav>

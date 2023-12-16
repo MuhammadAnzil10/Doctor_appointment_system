@@ -3,6 +3,7 @@ import User from "../model/userModel.js";
 import generateToken from "../utils/generateTokens.js";
 import generateMail from "../utils/generateMail.js";
 import generateOtp from "../utils/generateOtp.js";
+import Doctor from "../model/doctorModel.js";
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -220,6 +221,26 @@ const resetPassword = asyncHandler(async(req,res)=>{
        
 })
 
+const userGetAllDoctors = asyncHandler(async(req,res)=>{
+
+  const doctors = await Doctor.find({isBlocked:false,isVerified:true}).populate('specialization').select("-password -__v");
+
+  res.status(200).json(doctors);
+
+})
+
+const getDoctorById =asyncHandler(async(req,res)=>{
+
+  const id = req.params.id
+  const doctor = await Doctor.findById(id).select('-password -__v')
+  if(!doctor){
+  res.status(404)
+  throw new Error("User not found")
+  }
+
+  return res.status(200).json(doctor)
+})
+
 export {
   login,
   registerUser,
@@ -230,5 +251,7 @@ export {
   resendOtp,
   forgetPassword,
   resetPassword,
-  resetPasswordOtpVerify
+  resetPasswordOtpVerify,
+  userGetAllDoctors,
+  getDoctorById
 };

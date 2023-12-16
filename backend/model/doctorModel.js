@@ -50,7 +50,8 @@ const doctorSchema = new mongoose.Schema({
     required: true,
   },
   specialization: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"Specialization"
   },
   password: {
     type: String,

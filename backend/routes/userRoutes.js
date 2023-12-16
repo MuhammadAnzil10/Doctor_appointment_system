@@ -9,7 +9,9 @@ import {
   resendOtp,
   forgetPassword,
   resetPasswordOtpVerify,
-  resetPassword
+  resetPassword,
+  userGetAllDoctors,
+  getDoctorById
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -25,6 +27,8 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+  router.get('/doctors',protect,userGetAllDoctors)
+  router.post('/doctor/:id',protect,getDoctorById)
 
 
 

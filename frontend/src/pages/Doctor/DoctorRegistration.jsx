@@ -145,6 +145,7 @@ const DoctorRegistration = () => {
                         name="full_name"
                         id="full_name"
                         className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                        autoComplete='username'
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -152,11 +153,12 @@ const DoctorRegistration = () => {
                     <div className="md:col-span-5">
                       <label htmlFor="email">Email Address</label>
                       <input
-                        type="text"
+                        type="email"
                         name="email"
                         id="email"
                         className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                         placeholder="email@gmail.com"
+                        autoComplete="username"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
@@ -209,7 +211,7 @@ const DoctorRegistration = () => {
                           id="country"
                           placeholder="Country"
                           className="px-4 appearance-none outline-none text-gray-800 w-full bg-transparent"
-                          value={address.Country}
+                          value={address.country}
                           onChange={(e) =>
                             setAddress({ ...address, country: e.target.value })
                           }
@@ -224,7 +226,7 @@ const DoctorRegistration = () => {
                           id="state"
                           placeholder="State"
                           className="px-4 appearance-none outline-none text-gray-800 w-full bg-transparent"
-                          value={address.State}
+                          value={address.state}
                           onChange={(e) =>
                             setAddress({ ...address, state: e.target.value })
                           }
@@ -265,6 +267,7 @@ const DoctorRegistration = () => {
                         id="qualification"
                         className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                         placeholder="Qualification"
+                        
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
                       />
@@ -313,6 +316,7 @@ const DoctorRegistration = () => {
                         id="password"
                         className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                         placeholder="Enter Password"
+                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
