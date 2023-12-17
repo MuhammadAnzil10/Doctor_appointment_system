@@ -1,33 +1,66 @@
 import { toast } from "react-toastify";
-import { useGetAllDoctorsQuery, useVerifyDoctorMutation } from "../../AdminSlices/adminApiSlice.js";
+import {
+  useGetAllDoctorsQuery,
+  useVerifyDoctorMutation,
+  useBlockDoctorMutation,
+  useUnBlockDoctorMutation,
+} from "../../AdminSlices/adminApiSlice.js";
 import { useState, useEffect } from "react";
 import { CircleLoader } from "react-spinners";
 
-
 const DoctorsLists = () => {
- 
   const { data: doctors, refetch } = useGetAllDoctorsQuery();
-  const[verifyDoctor,{isLoading}]= useVerifyDoctorMutation()
-  const [doctorsLists, setDoctorsLists] = useState( doctors || []);
+  const [blockDoctor] = useBlockDoctorMutation()
+  const [unblockDoctor] = useUnBlockDoctorMutation()
+  const [verifyDoctor, { isLoading }] = useVerifyDoctorMutation();
+  const [doctorsLists, setDoctorsLists] = useState(doctors || []);
+  
 
   useEffect(() => {
-    if(doctors)
-    setDoctorsLists(doctors);
+    if (doctors) setDoctorsLists(doctors);
   }, [doctors]);
 
-  const handleClick =async (id)=>{
-      
+  const handleClick = async (id) => {
     try {
+      const res = await verifyDoctor(id).unwrap();
+      toast.success(res.message);
 
-     const res = await verifyDoctor(id).unwrap()
-     toast.success(res.message)
-
-     refetch()
+      refetch();
     } catch (err) {
-      toast.error(err.data.message || err.error)
+      toast.error(err.data.message || err.error);
     }
+  };
+
+  const handleUnBlock =async (id)=>{
+
+     try {
+
+      const res = await unblockDoctor(id).unwrap()
+      refetch()
+      console.log("handleUnBlock",res)
+      toast.success('Successfully UnBlocked')
+
+      
+     } catch (error) {
+      toast.error(err.data.message || err.error);
+     }
 
   }
+
+  const handleBlock =async (id)=>{
+          
+    try {
+      const res = await blockDoctor(id).unwrap()
+      refetch()
+      console.log("handleBlock",res)
+      toast.success('Successfully Blocked')
+    } catch (err) {
+      toast.error(err?.data?.message || err?.error)
+      
+    }
+  }
+
+
 
   return (
     <div className="relative overflow-x-auto py-4 px-2">
@@ -56,7 +89,10 @@ const DoctorsLists = () => {
               Status
             </th>
             <th scope="col" className="px-6 py-3">
-              Action
+              Authorise
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Actions
             </th>
           </tr>
         </thead>
@@ -79,23 +115,44 @@ const DoctorsLists = () => {
                   <td className="px-6 py-4">{doctor.address.street}</td>
                   <td className="px-6 py-4">{doctor.qualification}</td>
                   <td className="px-6 py-4">{doctor.experience}</td>
-                  <td className="px-6 py-4">{doctor.isVerified ? "Verified" : "Pending"}</td>
+                  <td className="px-6 py-4">
+                    {doctor.isVerified ? "Verified" : "Pending"}
+                  </td>
 
-                 
-                  
                   <td className="px-6 py-4">
                     {doctor.isVerified ? (
                       <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Verified
                       </button>
-                    ) : isLoading ?  <CircleLoader
-                      color="#0000ff"
-                      size={20}
-                      className="ml-12 py-2 px-4"
-                    /> : (
-                      <button className="bg-green-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={e=>handleClick(doctor._id)}>
+                    ) : isLoading ? (
+                      <CircleLoader
+                        color="#0000ff"
+                        size={20}
+                        className="ml-12 py-2 px-4"
+                      />
+                    ) : (
+                      <button
+                        className="bg-green-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={(e) => handleClick(doctor._id)}
+                      >
                         Verify
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    {doctor?.isBlocked ? (
+                      <button  className="bg-green-500 hover:bg-green-700
+                       text-white font-bold py-2 px-4 rounded"
+                       onClick={e=>handleUnBlock(doctor._id)}
+                       >
+                        Unblock
+                      </button>
+                    ) : (
+                      <button className="bg-red-500 hover:bg-red-700
+                       text-white font-bold py-2 px-4 rounded"
+                       onClick={e=>handleBlock(doctor._id)}
+                       >
+                        Unblock
                       </button>
                     )}
                   </td>

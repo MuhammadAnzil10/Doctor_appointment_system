@@ -82,6 +82,18 @@ export const adminApiSlices = apiSlice.injectEndpoints({
         method:"PUT",
         body:{id}
       })
+    }),
+    blockDoctor:builder.mutation({
+      query:(id)=>({
+          url:`${ADMIN_URL}/block-doctor/${id}`,
+          method:"PUT"
+      })
+    }),
+    unBlockDoctor:builder.mutation({
+      query:(id)=>({
+          url:`${ADMIN_URL}/unblock-doctor/${id}`,
+          method:"PUT"
+      })
     })
   }),
 });
@@ -98,6 +110,10 @@ export const {
   useAddSepcializationMutation,
   useGetAllSpecializationQuery,
   useGetAllDoctorsQuery,
-  useVerifyDoctorMutation
+  useVerifyDoctorMutation,
+  useBlockDoctorMutation,
+  useUnBlockDoctorMutation
+  
 
 } = adminApiSlices;
+
