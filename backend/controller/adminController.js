@@ -214,6 +214,7 @@ const blockDoctor = asyncHandler(async (req, res) => {
   }
 
   doctor.isBlocked = true;
+  
   doctor.save();
   res.status(200);
   res.json({

@@ -70,8 +70,9 @@ const DoctorRegistration = () => {
         password,
         cloudImage,
       }).unwrap();
-      toast.success(res.message);
-      navigate('/doctor')
+     await toast.success('Form submitted successfully')
+       toast.success("wait for administartor confirmation mail");
+     navigate('/doctor')
     } catch (err) {
       console.log(err);
       toast.error(err?.data?.message || err.error);

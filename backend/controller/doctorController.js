@@ -18,6 +18,12 @@ const doctorRegister = asyncHandler(async (req, res) => {
   } = req.body;
 
   const doctor = await Doctor.findOne({ email, phone });
+
+  if (doctor.isBlocked) {
+    res.status(401);
+    throw new Error("You have been blocked by Administator");
+  }
+
   if (doctor) {
     res.status(409);
     throw new Error("User already existing");
@@ -66,25 +72,110 @@ const doctorLogin = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("You have been blocked by administrator");
   }
-
-  if (doctor.matchPassword(password)) {
+   
+  if (await (doctor.matchPassword(password))) {
     generateDoctorToken(res, doctor._id);
     res.status(200).json({
       _id: doctor._id,
       name: doctor.name,
       email: doctor.email,
     });
+  }else{
+    res.status(401)
+    throw new Error('Password not match')
+    }
+});
+
+const doctorLogout = asyncHandler(async (req, res) => {
+  res.cookie("doctorToken", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+
+  return res.status(200).json({ message: "User Logged Out" });
+});
+
+const doctorForgetPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const doctor = await Doctor.findOne({ email });
+
+  if (doctor.isBlocked) {
+    res.status(401);
+    throw new Error("You have been blocked by administrator");
+  }
+  if (!doctor.isVerified) {
+    res.status(403);
+    throw new Error("You account verification is on processing...");
+  }
+
+  const verificationCode = generateOtp();
+
+  const status = await generateMail(verificationCode, email);
+
+  if (status.success) {
+    doctor.verificationCode = verificationCode;
+    await doctor.save();
+    res.status(200).json({
+      message:
+        "Email has sent to your registered Email Id with OTP for Verification.",
+      status: 200,
+      doctorData: {
+        name: doctor._doc.name,
+        email: doctor._doc.email,
+      },
+    });
+  } else if (!status?.success) {
+    res.status(500);
+    throw new Error("Server Temporarily not available");
   }
 });
 
-const doctorLogout =asyncHandler(async(req,res)=>{
+const doctorOtpVerification = asyncHandler(async (req,res ) => {
+  const { email, verificationCode } = req.body;
 
-   res.cookie("doctorToken", "", {
-      httpOnly: true,
-      expires: new Date(0),
-    });
+  const doctor = await Doctor.findOne({ email,verificationCode });
+
+  if (!doctor) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+  doctor.isVerified = true;
+  await doctor.save();
+  return res.status(200).json({
+    message: "Otp verified successfully.",
+    status:200
+  });
+
   
-    return res.status(200).json({ message: "User Logged Out" });
+});
+
+const doctorResetPassword =asyncHandler(async(req,res)=>{
+
+  const {email,password}=req.body
+
+  const doctor = await Doctor.findOne({email})
+  if (doctor) {
+    doctor.password=password;
+    await doctor.save()
+    generateDoctorToken(res,doctor._id)
+    res.status(200).json({ 
+    _id: doctor._id,
+    name: doctor.name,
+    email: doctor.email,
+    isBlocked:doctor.isBlocked, 
+    status:200
+  });
+  } else {
+    res.status(404)
+    throw new Error("User not found")
+  }
 })
 
-export { doctorRegister, doctorLogin, doctorLogout };
+export {
+  doctorRegister,
+  doctorLogin,
+  doctorLogout,
+  doctorForgetPassword,
+  doctorOtpVerification,
+  doctorResetPassword
+};

@@ -9,6 +9,11 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
+  if(user.isBlocked){
+    res.status(401)
+    throw new Error('You have been blocked by Administrator')
+  }
+
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
     return res.status(201).json({
@@ -152,6 +157,10 @@ const forgetPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
 
+  if(user.isBlocked){
+    res.status(401)
+    throw new Error('You have been blocked by Administrator')
+  }
   if (!user) {
     res.status(400);
     throw new Error("Invalid user");
@@ -188,6 +197,8 @@ const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
           res.status(400)
           throw new Error('Invalid User Data')
         }
+
+
         user.isVerified = true;
         await user.save();
         return res.status(200).json({

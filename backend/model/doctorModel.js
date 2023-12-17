@@ -65,6 +65,10 @@ const doctorSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  verificationCode:{
+    type:String,
+    default:''
+  }
 });
 
 
@@ -78,7 +82,7 @@ doctorSchema.pre("save", async function (next) {
 });
 
 doctorSchema.methods.matchPassword=async function(enteredPassword ){
-
+console.log(await bcryptjs.compare(enteredPassword,this.password));
   return await bcryptjs.compare(enteredPassword,this.password)
 
 }
