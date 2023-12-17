@@ -39,6 +39,9 @@ import DoctorsLists from "./pages/Admin/DoctorsLists.jsx";
 import UserDoctorsLists from "./pages/User/UserDoctorsLists.jsx";
 import DoctorPublicRoute from "./pages/Doctor/DoctorPublicRoute.jsx";
 import DoctorDetails from "./pages/User/DoctorDetails.jsx";
+import DoctorForgetPassword from "./pages/Doctor/DoctorForgetPassword.jsx";
+import DoctorOtpPage from "./pages/Doctor/DoctorOtpPage.jsx";
+import DoctorResetPassword from "./pages/Doctor/DoctorResetPassword.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -83,6 +86,10 @@ const router = createBrowserRouter(
       <Route path="" element={<DoctorPublicRoute />}>
         <Route path="/doctor/register" element={<DoctorRegistration />} />
         <Route path="/doctor/login" element={<DoctorLogin />} />
+        <Route path="/doctor/forget-password" element={<DoctorForgetPassword />} />
+        <Route path="/doctor/verify-otp" element={<DoctorOtpPage />} />
+        <Route path="/doctor/reset-password" element={<DoctorResetPassword />} />
+
       </Route>
       <Route path="/doctor" element={<DoctorLayout />}>
         <Route index={true} path="/doctor" element={<DoctorHome />} />

@@ -98,7 +98,10 @@ const doctorLogout = asyncHandler(async (req, res) => {
 const doctorForgetPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const doctor = await Doctor.findOne({ email });
-
+      if(!doctor){
+        res.status(404);
+    throw new Error("User Not found");
+      }
   if (doctor.isBlocked) {
     res.status(401);
     throw new Error("You have been blocked by administrator");
@@ -143,6 +146,7 @@ const doctorOtpVerification = asyncHandler(async (req,res ) => {
   await doctor.save();
   return res.status(200).json({
     message: "Otp verified successfully.",
+    email:doctor.email,
     status:200
   });
 
@@ -154,6 +158,7 @@ const doctorResetPassword =asyncHandler(async(req,res)=>{
   const {email,password}=req.body
 
   const doctor = await Doctor.findOne({email})
+
   if (doctor) {
     doctor.password=password;
     await doctor.save()
@@ -165,7 +170,7 @@ const doctorResetPassword =asyncHandler(async(req,res)=>{
     isBlocked:doctor.isBlocked, 
     status:200
   });
-  } else {
+  } else  {
     res.status(404)
     throw new Error("User not found")
   }

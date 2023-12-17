@@ -1,48 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-import {
-  useVerifyOtpMutation,
-  useResendOtpMutation,
-  useResetPasswordOtpMutation
-} from "../../UserSlices/usersApiSlice";
-import { toast } from "react-toastify";
-import { setCredentials } from "../../UserSlices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { CircleLoader } from "react-spinners";
-import { ToastContainer } from "react-toastify";
+import {useRef,useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import { useDoctorOtpVerifyMutation } from "../../DoctorSlices/doctorApiSlice.js";
+import {toast} from 'react-toastify'
 
-const UserOtpPage = () => {
-  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
-  const [resendOtp, { otpIsLoding }] = useResendOtpMutation();
-  const [resetPasswordOtpVerify] = useResetPasswordOtpMutation()
-  const [otp, setOtp] = useState([]);
-  const [countDown, setCountDown] = useState(60);
-  const [resendDisabled, setResendDisabled] = useState(true);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+const DoctorOtpPage =()=>{
   const inputeRef1 = useRef();
   const inputeRef2 = useRef();
   const inputeRef3 = useRef();
   const inputeRef4 = useRef();
-  const { userInfo } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
-
-  useEffect(() => {
-   const timer = startCountDown();
-
-    return ()=>{
-      clearInterval(timer)
-    }
-  }, []);
-
+  const [otp, setOtp] = useState([]);
+  const navigate = useNavigate();
+  const [doctorOtpVerify,{isLoading}] = useDoctorOtpVerifyMutation()
   const urlSearchParams = new URLSearchParams(window.location.search);
   const email = urlSearchParams.get("email");
-  const resetPassword = urlSearchParams.get("forget-password")
+
   const handleInput = (e, nextInputRef, index) => {
     const currentInput = e.target;
     const inputValue = currentInput.value;
@@ -66,60 +39,24 @@ const UserOtpPage = () => {
     }
   };
 
-  const startCountDown = () => {
-    const timer = setInterval(() => {
-      setCountDown((prevCount) => {
-        if (prevCount === 1) {
-          clearInterval(timer);
-          setResendDisabled(false);
-        }
-
-        return prevCount - 1;
-      });
-    }, 1000);
-    return timer
-  };
-
-  const handleResendOtp = async (e) => {
-    const { email } = JSON.parse(localStorage.getItem("userData"));
-
-    try {
-      const res = await resendOtp({ email }).unwrap();
-
-      if (res.status === 200) {
-        toast.success("OTP sent successfully! Check your email.", {
-          autoClose: 3000,
-        });
-        setResendDisabled(true);
-        setCountDown(60);
-        startCountDown();
-      }
-    } catch (error) {
-      toast.error(err?.data?.message || err.error);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const verificationCode = otp.join("");
+
     try {
-      if(!resetPassword){
-        const res = await verifyOtp({ email, verificationCode }).unwrap();
-        const { message, ...rest } = res;
-        dispatch(setCredentials({ ...rest }));
-        toast.success(message);
-        navigate("/");
-        return
-      }
-      const res = await resetPasswordOtpVerify({email,verificationCode}).unwrap()
+      const res = await doctorOtpVerify({email,verificationCode}).unwrap()
+      console.log(res);
       if(res?.status === 200){
+        localStorage.setItem('doctorData',res.email)
        toast.success(res.message)
-        navigate('/reset-password')
+        navigate('/doctor/reset-password')
       }
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
   };
+
 
   return (
     <div className="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
@@ -185,39 +122,13 @@ const UserOtpPage = () => {
 
                 <div className="flex flex-col space-y-5">
                   <div>
-                    {resendDisabled ? (
-                      <button className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm ">
+                  <button className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm ">
                         {isLoading ? (
                           <CircleLoader color="#ffffff" size={20} />
                         ) : (
                           "Verify Account"
                         )}
                       </button>
-                    ) : (
-                      <button
-                        disabled
-                        className="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-gray-500 border-none text-white text-sm shadow-sm "
-                      >
-                        Verify Account
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                    <p>
-                      {resendDisabled
-                        ? "Wait for new otp :- "
-                        : "Didn't recieve code?"}
-                    </p>
-                   {resendDisabled ? countDown :
-                    (<p
-                      className="flex flex-row items-center text-blue-600 cursor-pointer hover:underline"
-                      rel="noopener noreferrer"
-                      onClick={handleResendOtp}
-                    >
-                      Resend
-                    </p>)
-}
                   </div>
                 </div>
               </div>
@@ -227,6 +138,7 @@ const UserOtpPage = () => {
       </div>
     </div>
   );
-};
+}
 
-export default UserOtpPage;
+
+export default DoctorOtpPage;

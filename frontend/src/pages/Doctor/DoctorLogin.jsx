@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDoctorLoginMutation } from "../../DoctorSlices/doctorApiSlice.js";
 import {CircleLoader} from 'react-spinners';
+
 import {ToastContainer, toast} from 'react-toastify';
 import { setDoctorCredential } from "../../DoctorSlices/DoctorAuthSlice.js";
 import { useDispatch } from "react-redux";
@@ -22,7 +23,6 @@ const DoctorLogin = () => {
     try {
 
       const res = await doctorLogin({email,password}).unwrap()
-      console.log(res);
       dispatch(setDoctorCredential({...res}))
       toast.success('Logged in Successfully')
       navigate('/doctor')
@@ -36,11 +36,6 @@ const DoctorLogin = () => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <ToastContainer />
-        {/* <img
-            className="mx-auto h-10 w-auto"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-            alt="Your Company"
-          /> */}
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
           Welcomeback to V'care Hospital
         </h2>
@@ -82,7 +77,7 @@ const DoctorLogin = () => {
               </label>
               <div className="text-sm">
                 <Link
-                  to="#"
+                  to="/doctor/forget-password"
                   className="font-semibold text-indigo-600 hover:text-indigo-500"
                 >
                   Forgot password?
