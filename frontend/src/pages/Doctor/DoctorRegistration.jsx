@@ -7,9 +7,9 @@ import userProfile from "../../assets/images/profile.png";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import { doctorFormValidation } from "../../Helpers.js";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const DoctorRegistration = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState({
@@ -41,7 +41,7 @@ const DoctorRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+
     if (
       !doctorFormValidation({
         name,
@@ -70,9 +70,9 @@ const DoctorRegistration = () => {
         password,
         cloudImage,
       }).unwrap();
-     await toast.success('Form submitted successfully')
-       toast.success("wait for administartor confirmation mail");
-     navigate('/doctor')
+      await toast.success("Form submitted successfully");
+      toast.success("wait for administartor confirmation mail");
+      navigate("/doctor");
     } catch (err) {
       console.log(err);
       toast.error(err?.data?.message || err.error);
@@ -108,8 +108,14 @@ const DoctorRegistration = () => {
         <div>
           {<ToastContainer />}
           <h2 className="font-semibold text-xl text-gray-600">
-            Registration Form
+            Registration Form{" "}
+            <Link to="/doctor">
+              <p className="relative self-start inline-block w-auto px-4 py-2 mx-auto mt-0 text-base font-bold text-white bg-indigo-600 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0">
+                Home
+              </p>
+            </Link>
           </h2>
+
           <p className="text-gray-500 mb-6">Vcare Hospital.</p>
           <div className="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
             <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
@@ -146,7 +152,7 @@ const DoctorRegistration = () => {
                         name="full_name"
                         id="full_name"
                         className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                        autoComplete='username'
+                        autoComplete="username"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                       />
@@ -268,7 +274,6 @@ const DoctorRegistration = () => {
                         id="qualification"
                         className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                         placeholder="Qualification"
-                        
                         value={qualification}
                         onChange={(e) => setQualification(e.target.value)}
                       />

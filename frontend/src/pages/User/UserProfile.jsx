@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
 import { setCredentials } from "../../UserSlices/authSlice.js";
-import { useUpdateUserMutation } from "../../UserSlices/usersApiSlice.js";
+import { useLogoutMutation, useUpdateUserMutation } from "../../UserSlices/usersApiSlice.js";
+import { logout } from "../../UserSlices/authSlice.js";
+
 const UserProfile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,6 +16,8 @@ const UserProfile = () => {
   const dispatch = useDispatch();
   const {userInfo} = useSelector((state)=>state.auth);
   const [updateProfile,{isLoading}]= useUpdateUserMutation()
+  const [logoutApiCall] = useLogoutMutation();
+
 
   useEffect(()=>{
     setName(userInfo.name)
@@ -44,25 +48,35 @@ const UserProfile = () => {
     }
   };
 
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      localStorage.removeItem("isToastShown");
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
-    <section className="bg-gray-50 dark:bg-gray-900 pt-12">
+    <section className="bg-white-50 dark:bg-white-900 pt-12 mb-20">
+       
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0 mt-10">
         <Link
           to="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+          className="flex items-center mb-6 text-2xl font-semibold text-blck-900 dark:black-white"
         >
-          <img
-            className="w-8 h-8 mr-2"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-            alt="logo"
-          />
+       
           We Care You..
+          
         </Link>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Profile
+              Profile 
             </h1>
+           
             <form className="space-y-4 md:space-y-6" onSubmit={submitHandler}>
               <div>
                 <label
@@ -149,11 +163,13 @@ const UserProfile = () => {
               >
               {isLoading ? <ClipLoader color="#ffffff" size={20} /> : "Update"}
               </button>
+              <p className="text-red-500 mt-2 underline hover:cursor-pointer" onClick={logoutHandler}>Logout</p>
            
             </form>
           </div>
         </div>
       </div>
+     
     </section>
   );
 };

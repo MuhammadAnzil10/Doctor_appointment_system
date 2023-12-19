@@ -7,7 +7,7 @@ const adminProtect =asyncHandler( async(req,res,next)=>{
 
 
   const token = req.cookies.adminToken;
-console.log('jhhbhhhhhhhhhhhhhh',token);
+
   if(token){
     try {
       const decoded =  jwt.verify(token,process.env.ADMIN_JWT_SECRET)

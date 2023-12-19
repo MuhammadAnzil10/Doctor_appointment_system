@@ -2,15 +2,14 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import homeImage from "../../assets/images/userHomePage.png";
-import hospitalImg from "../../assets/images/hospital.jpg";
-import Carousel1 from "../../components/Carousel";
+import { Link } from "react-router-dom";
 
 const UserHome = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if(localStorage.getItem('userData')){
-      localStorage.removeItem('userData')
+    if (localStorage.getItem("userData")) {
+      localStorage.removeItem("userData");
     }
     const isToastShownBefore = localStorage.getItem("isToastShown");
     if (userInfo && !isToastShownBefore) {
@@ -20,26 +19,31 @@ const UserHome = () => {
   }, [userInfo]);
 
   return (
-    <div className="flex-col">
-       <Carousel1 images={homeImage} />
-      <div className="bg-slate-600 flex items-center justify-center">
-        <div className="w-6/12 inline-block">
-          <img src={homeImage} alt="" className="h-full w-f" />
-        </div>
-        <div className="w-6/12 inline-block  rounded-lg ">
-          <p className="text-white text-center font-bold ">
-            {" "}
+    <div className="relative  items-center justify-center w-full overflow-x-hidden lg:pt-40 lg:pb-40 xl:pt-40 xl:pb-64 ">
+      <div className="container flex flex-col items-center justify-between h-full max-w-6xl px-8 mx-auto -mt-32 lg:flex-row xl:px-0">
+        <div className="z-30 flex flex-col items-center w-full max-w-xl pt-48 text-center lg:items-start lg:w-1/2 lg:pt-20 xl:pt-40 lg:text-left">
+          <h1 className="relative  mb-4 text-3xl font-black leading-tight text-gray-900 sm:text-6xl xl:mb-8">
+            Vcare Your family
+          </h1>
+          <p className="pr-0 mb-8 text-base text-gray-600 sm:text-lg xl:text-xl lg:pr-20">
             "Welcome to 'We Care Hospital,' where our dedicated team is
             committed to providing compassionate and personalized care for your
             well-being
           </p>
+          <Link
+            to="/doctors"
+            className="relative self-start inline-block w-auto px-8 py-4 mx-auto mt-0 text-base font-bold text-white bg-indigo-600 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0"
+          >
+            Book Today!
+          </Link>
         </div>
-      </div>
-      <div className="bg-red-600">
-        <div className="bg-black flex  items-center justify-evenly">
-          <div className="bg-yellow-500 w-52 h-52">Cont 1</div>
-          <div className="bg-green-500 w-52 h-52">Cont 2</div>
-          <div className="bg-purple-600 w-52 h-52">Cont 3</div>
+        <div className="relative z-50 flex flex-col items-end justify-center w-full h-full lg:w-1/2 ms:pl-10">
+          <div className="container relative left-0 w-full max-w-4xl lg:absolute xl:max-w-6xl lg:w-screen">
+            <img
+              src={homeImage}
+              className="w-full lg:ml-4 z-0 h-auto mt-20 mb-20 ml-0 lg:mt-24 xl:mt-40 lg:mb-0 lg:h-full lg:-ml-12"
+            />
+          </div>
         </div>
       </div>
     </div>

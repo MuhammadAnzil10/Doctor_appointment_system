@@ -6,13 +6,15 @@ import {
   useUnBlockUserMutation,
 } from "../../AdminSlices/adminApiSlice.js";
 import { toast } from "react-toastify";
-
+import {useDispatch} from 'react-redux'
+import { logout } from "../../UserSlices/authSlice.js";
 const UsersLists = () => {
   const [users, setUsers] = useState([]);
   const [getAllUsers, { isLoading }] = useGetAllUsersMutation();
   const [blockStatus, setBlockStatus] = useState(null);
   const [unBlockUser] = useUnBlockUserMutation();
   const [blockUser] = useBlockUserMutation();
+  const dispatch = useDispatch()
 
   const fetchAllUsers = async () => {
     try {
@@ -28,6 +30,8 @@ const UsersLists = () => {
     try {
       const res = await blockUser(id).unwrap();
       if (res.isBlocked) {
+        localStorage.setItem('userInfo',null)
+        dispatch(logout())
         setBlockStatus(res);
       }
     } catch (err) {

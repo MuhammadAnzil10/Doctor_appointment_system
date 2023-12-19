@@ -19,7 +19,8 @@ const doctorRegister = asyncHandler(async (req, res) => {
 
   const doctor = await Doctor.findOne({ email, phone });
 
-  if (doctor.isBlocked) {
+
+  if (doctor && doctor.isBlocked) {
     res.status(401);
     throw new Error("You have been blocked by Administator");
   }

@@ -2,10 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+
 .hide-scrollbar::-webkit-scrollbar {
 
 
   display: none;
 
  }
+
+ .active {
+  color: black;
+  font-weight: bold; 
+
+}
+
 

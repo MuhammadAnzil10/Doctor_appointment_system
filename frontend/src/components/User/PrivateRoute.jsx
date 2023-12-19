@@ -5,7 +5,10 @@ import { useSelector } from "react-redux";
 
 const PrivateRoute =()=>{
 const {userInfo} = useSelector((state)=>state.auth)
-  return userInfo ? <Outlet />: (
+const userData = JSON.parse(localStorage.getItem('userInfo'))
+
+
+  return userData ? <Outlet />: (
     <Navigate to='/login' replace />
   )
 }

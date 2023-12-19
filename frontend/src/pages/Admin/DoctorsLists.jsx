@@ -6,7 +6,9 @@ import {
   useUnBlockDoctorMutation,
 } from "../../AdminSlices/adminApiSlice.js";
 import { useState, useEffect } from "react";
-import { CircleLoader } from "react-spinners";
+import { doctorLogout } from "../../DoctorSlices/DoctorAuthSlice.js";
+import { useDispatch } from "react-redux";
+
 
 const DoctorsLists = () => {
   const { data: doctors, refetch } = useGetAllDoctorsQuery();
@@ -14,6 +16,7 @@ const DoctorsLists = () => {
   const [unblockDoctor] = useUnBlockDoctorMutation()
   const [verifyDoctor, { isLoading }] = useVerifyDoctorMutation();
   const [doctorsLists, setDoctorsLists] = useState(doctors || []);
+  const dispatch = useDispatch();
   
 
   useEffect(() => {
@@ -37,7 +40,7 @@ const DoctorsLists = () => {
 
       const res = await unblockDoctor(id).unwrap()
       refetch()
-      console.log("handleUnBlock",res)
+ 
       toast.success('Successfully UnBlocked')
 
       
@@ -52,7 +55,7 @@ const DoctorsLists = () => {
     try {
       const res = await blockDoctor(id).unwrap()
       refetch()
-      console.log("handleBlock",res)
+      dispatch(doctorLogout())
       toast.success('Successfully Blocked')
     } catch (err) {
       toast.error(err?.data?.message || err?.error)
@@ -63,7 +66,7 @@ const DoctorsLists = () => {
 
 
   return (
-    <div className="relative overflow-x-auto py-4 px-2">
+    <div className="relative overflow-x-auto py-4 px-2 mb-10">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -124,13 +127,7 @@ const DoctorsLists = () => {
                       <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                         Verified
                       </button>
-                    ) : isLoading ? (
-                      <CircleLoader
-                        color="#0000ff"
-                        size={20}
-                        className="ml-12 py-2 px-4"
-                      />
-                    ) : (
+                    ) :(
                       <button
                         className="bg-green-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                         onClick={(e) => handleClick(doctor._id)}
@@ -152,7 +149,7 @@ const DoctorsLists = () => {
                        text-white font-bold py-2 px-4 rounded"
                        onClick={e=>handleBlock(doctor._id)}
                        >
-                        Unblock
+                        Block
                       </button>
                     )}
                   </td>

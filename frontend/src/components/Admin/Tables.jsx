@@ -55,16 +55,16 @@ const Tables = ({ users, blockHandler, unBlockHandler }) => {
                       <td className="whitespace-nowrap px-6 py-4">
                         {user.bloodGroup}
                       </td>
-                     <td>{user?.isBlocked ? (<button className="bg-red-500 text-white p-2 rounded-md border
-                      border-red-700 hover:bg-red-700 focus:outline-none focus:ring focus:border-fred-300"
+                     <td>{user?.isBlocked ? (<button className="bg-green-500 text-white p-2 rounded-md border
+                      border-red-700 hover:bg-green-700 focus:outline-none focus:ring focus:border-fred-300"
                       onClick={e=>unBlockHandler(user._id)}
                       >
-                        Click me
-                      </button>) : (<button className="bg-blue-500 text-white p-2 rounded-md border
-                      border-blue-700 hover:bg-blue-700 focus:outline-none focus:ring focus:border-blue-300"
+                       Unblock
+                      </button>) : (<button className="bg-red-500 text-white p-2 rounded-md border
+                      border-red-700 hover:bg-red-700 focus:outline-none focus:ring focus:border-red-300"
                       onClick={e=>blockHandler(user._id)}
                       >
-                        Click me
+                         Block
                       </button>) 
                 }
                       </td>
