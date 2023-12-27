@@ -20,17 +20,12 @@ const doctorRegister = asyncHandler(async (req, res) => {
   const doctor = await Doctor.findOne({ email, phone });
 
 
-  if (doctor && doctor.isBlocked) {
-    res.status(401);
-    throw new Error("You have been blocked by Administator");
-  }
-
   if (doctor) {
     res.status(409);
     throw new Error("User already existing");
   }
 
-  console.log(address);
+
   const newDoctor = await Doctor.create({
     name,
     email,

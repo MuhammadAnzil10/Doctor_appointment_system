@@ -4,6 +4,7 @@ import generateToken from "../utils/generateTokens.js";
 import generateMail from "../utils/generateMail.js";
 import generateOtp from "../utils/generateOtp.js";
 import Doctor from "../model/doctorModel.js";
+import Specialization from "../model/specialization.js";
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -252,6 +253,13 @@ const getDoctorById =asyncHandler(async(req,res)=>{
   return res.status(200).json(doctor)
 })
 
+const getAllCategories = asyncHandler(async(req,res)=>{
+         
+  const specializations =await Specialization.find({isBlocked:false})
+    
+     res.status(200).json(specializations)
+})
+
 export {
   login,
   registerUser,
@@ -264,5 +272,6 @@ export {
   resetPassword,
   resetPasswordOtpVerify,
   userGetAllDoctors,
-  getDoctorById
+  getDoctorById,
+  getAllCategories
 };

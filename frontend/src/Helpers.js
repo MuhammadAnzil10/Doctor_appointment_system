@@ -11,16 +11,17 @@ export const doctorFormValidation = (data) => {
     cloudImage,
   } = data;
 
+
   const { street, country, state, pincode, city } = address;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
   if (name?.trim() === "" || name?.trim()?.length < 3) {
-    console.log("name");
     return false;
   } else if (email?.trim() === "" || !emailRegex?.test(email?.trim())) {
-    console.log("phone");
     return false;
-  } else if (phone?.trim() === "") {
-    console.log("phone");
+  } else if (!phoneRegex.test(phone)) {
     return false;
   } else if (
     street?.trim() === "" ||
@@ -29,13 +30,12 @@ export const doctorFormValidation = (data) => {
     pincode?.trim() === "" ||
     city?.trim() === ""
   ) {
-    console.log("address");
     return false;
   } else if (
     qualification?.trim() === "" ||
     experience?.trim() === "" ||
     specialization?.trim() === "" ||
-    password?.trim() === "" ||
+    passwordRegex.test(password) ||
     cloudImage?.trim() === ""
   ) {
     return false;
@@ -48,7 +48,7 @@ export const userRegisterValidation = (data) => {
   let { name, email, age, phone, bloodGroup, password, confirmPassword } = data;
 
   const nameRegex = /^[A-Za-z\s]+$/;
- 
+
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   const phoneRegex = /^[6-9]\d{9}$/;

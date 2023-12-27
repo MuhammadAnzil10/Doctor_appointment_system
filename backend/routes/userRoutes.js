@@ -11,7 +11,8 @@ import {
   resetPasswordOtpVerify,
   resetPassword,
   userGetAllDoctors,
-  getDoctorById
+  getDoctorById,
+  getAllCategories
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -29,6 +30,7 @@ router
   .put(protect, updateUserProfile);
   router.get('/doctors',protect,userGetAllDoctors)
   router.post('/doctor/:id',protect,getDoctorById)
+  router.get('/doctor-specializations',protect,getAllCategories)
 
 
 

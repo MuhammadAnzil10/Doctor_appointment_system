@@ -1,5 +1,5 @@
 import logo from "../../assets/images/V-care-logo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { useLogoutMutation } from "../../UserSlices/usersApiSlice.js";
@@ -24,28 +24,28 @@ const UserHeader = () => {
           <img src={logo} alt="" className=" w-24 h-16  object-cover" />
         </div>
         <div className="flex items-center pr-4">
-          <ul className="flex space-x-2 dark:text-white font-bold justify-center cursor-pointer">
-          <Link to="/">
+          <ul className="flex space-x-2 dark:text-white  justify-center cursor-pointer">
+          <NavLink to="/">
               <li>Home</li>
-            </Link>
-            <Link to="/doctors">
+            </NavLink>
+            <NavLink to="/doctors">
               <li>Doctors</li>
-            </Link>
-            <Link to="/bookings">
+            </NavLink>
+            <NavLink to="/bookings">
               <li>Bookings</li>
-            </Link>
-            <Link to="/favourites">
+            </NavLink>
+            <NavLink to="/favourites">
               <li>Favourites</li>
-            </Link>
-            <Link to="/profile"></Link>
+            </NavLink>
+            <NavLink to="/profile"></NavLink>
             {userInfo ? (
-               <Link to="/profile">
+               <NavLink to="/profile">
                <li>Profile</li>
-             </Link>
+             </NavLink>
             ) : (
-              <Link to="/login">
+              <NavLink to="/login">
                 <li>Login</li>
-              </Link>
+              </NavLink>
             )}
         
           </ul>

@@ -70,7 +70,7 @@ const DoctorRegistration = () => {
         password,
         cloudImage,
       }).unwrap();
-      await toast.success("Form submitted successfully");
+      toast.success("Form submitted successfully");
       toast.success("wait for administartor confirmation mail");
       navigate("/doctor");
     } catch (err) {
@@ -86,6 +86,16 @@ const DoctorRegistration = () => {
   }, [image]);
 
   const handleFileChange = async () => {
+    const fileSizeInBytes = image.size;
+    const fileSizeInMb = fileSizeInBytes / (1024 * 1024);
+
+    if (!image.type.startsWith("image/")) {
+      return toast.error("Please upload valid image");
+    }
+    if (fileSizeInMb > 5) {
+      return toast.error("Above 5mb file is not allowed");
+    }
+
     const formData = new FormData();
     formData.append("file", image);
     formData.append("upload_preset", "hmjcpvyg");

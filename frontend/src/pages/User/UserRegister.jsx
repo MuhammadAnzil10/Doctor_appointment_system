@@ -63,8 +63,8 @@ const UserRegister = () => {
   };
 
   return (
-    <section className="bg-white-50 dark:bg-white-900 pt-12 p-4 my-36 ">
-      <div className=" flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+    <section className="bg-white-50 dark:bg-white-900 pt-9 p-4 ">
+      <div className=" flex flex-col items-center justify-center px-6 py-8 mx-auto  lg:py-0">
         <Link
           to="#"
           className="flex items-center mb-6 text-2xl font-semibold text-black-900 dark:text-black"
@@ -183,8 +183,8 @@ const UserRegister = () => {
                   htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Password{" "}
-                  (<span className="text-red-500">
+                  Password
+                  (<span className="text-gray-500">
                     Must start with an uppercase letter.Must include at least
                     one special character.Must include at least one
                     number.Minimum length of 8 characters.
