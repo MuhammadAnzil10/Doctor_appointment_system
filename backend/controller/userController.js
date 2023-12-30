@@ -119,11 +119,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (req.body.password) {
       user.password = req.body.password;
     }
-    const updatdsUser = await user.save();
+    const updatedUser = await user.save();
     return res.status(200).json({
-      _id: updatdsUser._id,
-      name: updatdsUser.name,
-      email: updatdsUser.email,
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
     });
   } else {
     res.status(404);

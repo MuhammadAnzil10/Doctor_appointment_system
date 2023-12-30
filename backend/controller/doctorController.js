@@ -19,12 +19,10 @@ const doctorRegister = asyncHandler(async (req, res) => {
 
   const doctor = await Doctor.findOne({ email, phone });
 
-
   if (doctor) {
     res.status(409);
     throw new Error("User already existing");
   }
-
 
   const newDoctor = await Doctor.create({
     name,
@@ -53,9 +51,9 @@ const doctorRegister = asyncHandler(async (req, res) => {
 
 const doctorLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
+
   const doctor = await Doctor.findOne({ email });
-  console.log(doctor);
+
   if (!doctor) {
     res.status(401);
     throw new Error("Invalid Email or Password");
@@ -68,18 +66,18 @@ const doctorLogin = asyncHandler(async (req, res) => {
     res.status(401);
     throw new Error("You have been blocked by administrator");
   }
-   
-  if (await (doctor.matchPassword(password))) {
+
+  if (await doctor.matchPassword(password)) {
     generateDoctorToken(res, doctor._id);
     res.status(200).json({
       _id: doctor._id,
       name: doctor.name,
       email: doctor.email,
     });
-  }else{
-    res.status(401)
-    throw new Error('Password not match')
-    }
+  } else {
+    res.status(401);
+    throw new Error("Password not match");
+  }
 });
 
 const doctorLogout = asyncHandler(async (req, res) => {
@@ -94,10 +92,10 @@ const doctorLogout = asyncHandler(async (req, res) => {
 const doctorForgetPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const doctor = await Doctor.findOne({ email });
-      if(!doctor){
-        res.status(404);
+  if (!doctor) {
+    res.status(404);
     throw new Error("User Not found");
-      }
+  }
   if (doctor.isBlocked) {
     res.status(401);
     throw new Error("You have been blocked by administrator");
@@ -129,10 +127,10 @@ const doctorForgetPassword = asyncHandler(async (req, res) => {
   }
 });
 
-const doctorOtpVerification = asyncHandler(async (req,res ) => {
+const doctorOtpVerification = asyncHandler(async (req, res) => {
   const { email, verificationCode } = req.body;
 
-  const doctor = await Doctor.findOne({ email,verificationCode });
+  const doctor = await Doctor.findOne({ email, verificationCode });
 
   if (!doctor) {
     res.status(404);
@@ -142,35 +140,72 @@ const doctorOtpVerification = asyncHandler(async (req,res ) => {
   await doctor.save();
   return res.status(200).json({
     message: "Otp verified successfully.",
-    email:doctor.email,
-    status:200
+    email: doctor.email,
+    status: 200,
   });
-
-  
 });
 
-const doctorResetPassword =asyncHandler(async(req,res)=>{
+const doctorResetPassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-  const {email,password}=req.body
-
-  const doctor = await Doctor.findOne({email})
+  const doctor = await Doctor.findOne({ email });
 
   if (doctor) {
-    doctor.password=password;
-    await doctor.save()
-    generateDoctorToken(res,doctor._id)
-    res.status(200).json({ 
-    _id: doctor._id,
-    name: doctor.name,
-    email: doctor.email,
-    isBlocked:doctor.isBlocked, 
-    status:200
-  });
-  } else  {
-    res.status(404)
-    throw new Error("User not found")
+    doctor.password = password;
+    await doctor.save();
+    generateDoctorToken(res, doctor._id);
+    res.status(200).json({
+      _id: doctor._id,
+      name: doctor.name,
+      email: doctor.email,
+      isBlocked: doctor.isBlocked,
+      status: 200,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
   }
-})
+});
+
+const getDoctorProfile = asyncHandler(async (req, res) => {
+  const doctor = {
+    name: req.doctor.name,
+    email: req.doctor.email,
+    phone: req.doctor.phone,
+    images: req.doctor.images,
+    qualification: req.doctor.qualification,
+    experience: req.doctor.experience,
+    specialization: req.doctor.specialization,
+  };
+  return res.status(200).json(doctor);
+});
+
+const editDoctorProfile = asyncHandler(async (req, res) => {
+  const doctor = await Doctor.findById(req.doctor._id).select('-__v -isVerified -isBlocked -verificationCode -address');
+
+
+  if (!doctor) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  doctor.email = req.body.email || doctor.email;
+  doctor.phone = req.body.phone || doctor.phone;
+  doctor.qualification = req.body.qualification || doctor.qualification;
+  doctor.experience = req.body.experience || doctor.experience;
+  doctor.specialization = req.body.specialization || doctor.specialization;
+   
+  if(req.body.password){
+    doctor.password = req.body.password;
+  }
+
+    const updatedDoctor = await doctor.save();
+    const {password,...rest} = updatedDoctor._doc
+    res.status(200).json({
+      ...rest
+    })
+
+});
 
 export {
   doctorRegister,
@@ -178,5 +213,7 @@ export {
   doctorLogout,
   doctorForgetPassword,
   doctorOtpVerification,
-  doctorResetPassword
+  doctorResetPassword,
+  getDoctorProfile,
+  editDoctorProfile,
 };
