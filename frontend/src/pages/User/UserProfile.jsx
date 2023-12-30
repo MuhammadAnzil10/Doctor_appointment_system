@@ -18,6 +18,7 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
+  console.log(userInfo);
   const [updateProfile, { isLoading }] = useUpdateUserMutation();
   const [logoutApiCall] = useLogoutMutation();
 

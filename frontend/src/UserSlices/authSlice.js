@@ -7,7 +7,7 @@ const initialState = {
   
 };
 
-console.log(initialState);
+
 const authSlice = createSlice({
   name:'auth',
   initialState,

@@ -190,7 +190,7 @@ const verifyDoctor = asyncHandler(async (req, res) => {
   }
 
   const status = await generateVerificationMail(doctor.email);
-  console.log(status);
+
   if (status.success) {
     doctor.isVerified = true;
     doctor.save();

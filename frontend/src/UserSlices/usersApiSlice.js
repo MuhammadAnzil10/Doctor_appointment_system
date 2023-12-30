@@ -83,6 +83,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url:`${USERS_URL}/doctor-specializations`,
         method:'GET'
       })
+    }),
+    userGoogleAuth:builder.mutation({
+      query:(data)=>({
+       url:`${USERS_URL}/google-auth`,
+       method:"POST",
+       body:data
+      })
     })
 
   }),
@@ -100,5 +107,6 @@ export const {
   useResetPasswordMutation,
   useUserGetAllDoctorQuery,
   useUserGetOneDoctorMutation,
-  useGetAllSpecializationsQuery
+  useGetAllSpecializationsQuery,
+  useUserGoogleAuthMutation
 } = usersApiSlice;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useFetcher, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";

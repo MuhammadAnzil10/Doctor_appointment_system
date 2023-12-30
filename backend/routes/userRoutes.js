@@ -12,12 +12,14 @@ import {
   resetPassword,
   userGetAllDoctors,
   getDoctorById,
-  getAllCategories
+  getAllCategories,
+  googleAuth
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/register", registerUser);
+router.post("/google-auth", googleAuth);
 router.post("/verify-otp", verifyOtp);
 router.post('/resend-otp',resendOtp)
 router.post('/forget-password',forgetPassword)

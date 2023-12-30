@@ -5,6 +5,7 @@ import { useLoginMutation } from "../../UserSlices/usersApiSlice.js";
 import { setCredentials } from "../../UserSlices/authSlice.js";
 import {toast} from 'react-toastify';
 import ClipLoader from "react-spinners/ClipLoader";
+import OAuth from '../../components/User/OAuth.jsx'
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,6 @@ const UserLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [login, { isLoading, error }] = useLoginMutation();
-
    
 
 
@@ -118,6 +118,7 @@ const UserLogin = () => {
                color="#ffffff" size={20}
                /> :  "Sign in"}
               </button>
+              <OAuth />
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
                 <Link

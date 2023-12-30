@@ -6,6 +6,7 @@ import generateOtp from "../utils/generateOtp.js";
 import Doctor from "../model/doctorModel.js";
 import Specialization from "../model/specialization.js";
 
+
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -58,6 +59,9 @@ const registerUser = asyncHandler(async (req, res) => {
       userData: {
         name: user._doc.name,
         email: user._doc.email,
+        phone:user._doc.phone,
+        age: user._doc.age,
+        bloodGroup:user._doc.bloodGroup
       },
     });
   } else if (!status?.success) {
@@ -258,6 +262,47 @@ const getAllCategories = asyncHandler(async(req,res)=>{
   const specializations =await Specialization.find({isBlocked:false})
     
      res.status(200).json(specializations)
+}) 
+
+
+const googleAuth = asyncHandler(async(req,res)=>{
+  const { name, email } = req.body;
+
+     const user = await User.findOne({email})
+     if(user && user.isBlocked){
+      res.status(400)
+      throw new Error("Unauthorized")
+     }
+     
+     if(user){
+      generateToken(res,user._id)
+      res.status(200).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      })
+     }else{
+       const generatedPassword = Math.random().toString(36).
+      slice(-8) + ( Math.random().toString(36).slice(-8) ) ;
+      const newUser = await User.create({
+        name,
+        email,
+        password:generatedPassword,
+        bloodGroup:'unknwon',
+        age:0,
+        phone:0,
+        isVerified:true
+
+      })
+      generateToken(res,newUser._id)
+   
+      res.status(201).json({
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+      })
+     }
+
 })
 
 export {
@@ -273,5 +318,6 @@ export {
   resetPasswordOtpVerify,
   userGetAllDoctors,
   getDoctorById,
-  getAllCategories
+  getAllCategories,
+  googleAuth
 };
