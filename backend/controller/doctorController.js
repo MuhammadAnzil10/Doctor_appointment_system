@@ -52,7 +52,7 @@ const doctorRegister = asyncHandler(async (req, res) => {
 const doctorLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const doctor = await Doctor.findOne({ email });
+  const doctor = await Doctor.findOne({ email }).populate('specialization');
 
   if (!doctor) {
     res.status(401);
@@ -73,9 +73,14 @@ const doctorLogin = asyncHandler(async (req, res) => {
       _id: doctor._id,
       name: doctor.name,
       email: doctor.email,
+      phone:doctor.phone,
+      qualification:doctor.qualification,
+      specialization:doctor.specialization.name,
+      images:doctor.images,
+      experience:doctor.experience
     });
   } else {
-    res.status(401);
+    res.status(401)
     throw new Error("Password not match");
   }
 });

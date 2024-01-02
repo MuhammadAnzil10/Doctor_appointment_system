@@ -90,6 +90,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
        method:"POST",
        body:data
       })
+    }),
+    favourite : builder.mutation({
+      query:(id)=>({
+        url:`${USERS_URL}/favourite`,
+        method:"POST",
+        body:{id}
+      })
+    }),
+    getFavourite:builder.query({
+      query:()=>({
+        url:`${USERS_URL}/get-favourites`,
+        method:"GET"
+      })
     })
 
   }),
@@ -108,5 +121,7 @@ export const {
   useUserGetAllDoctorQuery,
   useUserGetOneDoctorMutation,
   useGetAllSpecializationsQuery,
-  useUserGoogleAuthMutation
+  useUserGoogleAuthMutation,
+  useFavouriteMutation,
+  useGetFavouriteQuery
 } = usersApiSlice;

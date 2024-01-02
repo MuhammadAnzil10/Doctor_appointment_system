@@ -5,15 +5,15 @@ import generateMail from "../utils/generateMail.js";
 import generateOtp from "../utils/generateOtp.js";
 import Doctor from "../model/doctorModel.js";
 import Specialization from "../model/specialization.js";
-
+import FavoriteDoctor from "../model/favoritesModel.js";
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
-  if(user.isBlocked){
-    res.status(401)
-    throw new Error('You have been blocked by Administrator')
+  if (user.isBlocked) {
+    res.status(401);
+    throw new Error("You have been blocked by Administrator");
   }
 
   if (user && (await user.matchPassword(password))) {
@@ -30,9 +30,9 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email,phone, age, password, bloodGroup } = req.body;
+  const { name, email, phone, age, password, bloodGroup } = req.body;
 
-  const userExist = await User.findOne({ $or:[{email},{phone}] });
+  const userExist = await User.findOne({ $or: [{ email }, { phone }] });
   if (userExist) {
     res.status(400);
     throw new Error("User already exists");
@@ -59,9 +59,9 @@ const registerUser = asyncHandler(async (req, res) => {
       userData: {
         name: user._doc.name,
         email: user._doc.email,
-        phone:user._doc.phone,
+        phone: user._doc.phone,
         age: user._doc.age,
-        bloodGroup:user._doc.bloodGroup
+        bloodGroup: user._doc.bloodGroup,
       },
     });
   } else if (!status?.success) {
@@ -162,9 +162,9 @@ const forgetPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
 
-  if(user.isBlocked){
-    res.status(401)
-    throw new Error('You have been blocked by Administrator')
+  if (user.isBlocked) {
+    res.status(401);
+    throw new Error("You have been blocked by Administrator");
   }
   if (!user) {
     res.status(400);
@@ -177,14 +177,14 @@ const forgetPassword = asyncHandler(async (req, res) => {
   if (status.success) {
     user.verificationCode = verificationCode;
     await user.save();
-    
+
     res.status(200).json({
       message: "Verification OTP sent to email ",
       status: 200,
-      userData:{
-        name:user._doc.name,
-        email:user._doc.email
-      }
+      userData: {
+        name: user._doc.name,
+        email: user._doc.email,
+      },
     });
   } else if (!status?.success) {
     res.status(500);
@@ -193,117 +193,173 @@ const forgetPassword = asyncHandler(async (req, res) => {
 });
 
 const resetPasswordOtpVerify = asyncHandler(async (req, res) => {
+  const { email, verificationCode } = req.body;
 
-        const {email,verificationCode}= req.body;
-      
-        const user = await User.findOne({email,verificationCode})
+  const user = await User.findOne({ email, verificationCode });
 
-        if(!user){
-          res.status(400)
-          throw new Error('Invalid User Data')
-        }
-
-
-        user.isVerified = true;
-        await user.save();
-        return res.status(200).json({
-          message: "Otp verified successfully.",
-          status:200
-        });
-
-
-});
-
-const resetPassword = asyncHandler(async(req,res)=>{
-          
-        const {email,password}=req.body
-
-        const user = await User.findOne({email})
-        if (user) {
-          user.password=password;
-          await user.save()
-          generateToken(res,user._id)
-          res.status(200).json({ 
-          _id: user._id,
-          name: user.name,
-          email: user.email, 
-          status:200
-        });
-        } else {
-          res.status(404)
-          throw new Error("User not found")
-        }
-
-       
-})
-
-const userGetAllDoctors = asyncHandler(async(req,res)=>{
-
-  const doctors = await Doctor.find({isBlocked:false,isVerified:true}).populate('specialization').select("-password -__v");
-
-  res.status(200).json(doctors);
-
-})
-
-const getDoctorById =asyncHandler(async(req,res)=>{
-
-  const id = req.params.id
-  const doctor = await Doctor.findById(id).populate('specialization').select('-password -__v')
-  if(!doctor){
-  res.status(404)
-  throw new Error("User not found")
+  if (!user) {
+    res.status(400);
+    throw new Error("Invalid User Data");
   }
 
-  return res.status(200).json(doctor)
-})
+  user.isVerified = true;
+  await user.save();
+  return res.status(200).json({
+    message: "Otp verified successfully.",
+    status: 200,
+  });
+});
 
-const getAllCategories = asyncHandler(async(req,res)=>{
-         
-  const specializations =await Specialization.find({isBlocked:false})
-    
-     res.status(200).json(specializations)
-}) 
+const resetPassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
+  const user = await User.findOne({ email });
+  if (user) {
+    user.password = password;
+    await user.save();
+    generateToken(res, user._id);
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      status: 200,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
 
-const googleAuth = asyncHandler(async(req,res)=>{
+const userGetAllDoctors = asyncHandler(async (req, res) => {
+  const doctors = await Doctor.find({ isBlocked: false, isVerified: true })
+    .populate("specialization")
+    .select("-password -__v");
+
+  res.status(200).json(doctors);
+});
+
+const getDoctorById = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const doctor = await Doctor.findById(id)
+    .populate("specialization")
+    .select("-password -__v");
+  if (!doctor) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  return res.status(200).json(doctor);
+});
+
+const getAllSpecializations = asyncHandler(async (req, res) => {
+  const specializations = await Specialization.find({ isBlocked: false });
+
+  res.status(200).json(specializations);
+});
+
+const googleAuth = asyncHandler(async (req, res) => {
   const { name, email } = req.body;
 
-     const user = await User.findOne({email})
-     if(user && user.isBlocked){
-      res.status(400)
-      throw new Error("Unauthorized")
-     }
-     
-     if(user){
-      generateToken(res,user._id)
-      res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-      })
-     }else{
-       const generatedPassword = Math.random().toString(36).
-      slice(-8) + ( Math.random().toString(36).slice(-8) ) ;
-      const newUser = await User.create({
-        name,
-        email,
-        password:generatedPassword,
-        bloodGroup:'unknwon',
-        age:0,
-        phone:0,
-        isVerified:true
+  const user = await User.findOne({ email });
+  if (user && user.isBlocked) {
+    res.status(400);
+    throw new Error("Unauthorized");
+  }
 
-      })
-      generateToken(res,newUser._id)
-   
-      res.status(201).json({
-        _id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-      })
-     }
+  if (user) {
+    generateToken(res, user._id);
+    res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } else {
+    const generatedPassword =
+      Math.random().toString(36).slice(-8) +
+      Math.random().toString(36).slice(-8);
+    const newUser = await User.create({
+      name,
+      email,
+      password: generatedPassword,
+      bloodGroup: "unknwon",
+      age: 0,
+      phone: 0,
+      isVerified: true,
+    });
+    generateToken(res, newUser._id);
 
-})
+    res.status(201).json({
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+    });
+  }
+});
+
+const favourites = asyncHandler(async (req, res) => {
+  const doctorId = req.body.id;
+  let userFavourites = await FavoriteDoctor.findOne({ user: req.user._id }).populate({
+    path: "doctor.doctorId",
+    populate: { path: "specialization" },
+  });
+
+  if (!userFavourites) {
+    const newFav = new FavoriteDoctor({
+      user: req.user._id,
+      doctor: [{ doctorId }],
+    });
+    const newFavourites = await newFav.save();
+
+    return res.status(200).json({
+      message: "Added to Favourites",
+      updatedFavourites: newFavourites,
+    });
+  }
+
+  const isDoctorInFavorites = userFavourites.doctor.some(
+    (doctor) => doctor.doctorId._id.toString() === doctorId
+  );
+
+  if (isDoctorInFavorites) {
+    userFavourites.doctor = userFavourites.doctor.filter(
+      (doctor) => doctor.doctorId._id.toString() !== doctorId
+    );
+
+    await userFavourites.save();
+
+    return res.status(200).json({
+      message: "Favourite Removed",
+      isRemoved: true,
+      updatedFavourites: userFavourites,
+    });
+  } else {
+
+    userFavourites.doctor.push({ doctorId })
+    await userFavourites.save();
+     userFavourites = await FavoriteDoctor.findOne({ user: req.user._id }).populate({
+      path: "doctor.doctorId",
+      populate: { path: "specialization" },
+    });
+    return res.status(200).json({
+      message: "Added to Favourites",
+      isAdded: true,
+      updatedFavourites: userFavourites,
+    });
+  }
+});
+
+const getFavourites = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const favouriteDoctors = await FavoriteDoctor.findOne({
+    user: userId,
+  }).populate({
+    path: "doctor.doctorId",
+    populate: { path: "specialization" },
+  });
+
+  return res.status(200).json({ favouriteDoctors });
+});
 
 export {
   login,
@@ -318,6 +374,8 @@ export {
   resetPasswordOtpVerify,
   userGetAllDoctors,
   getDoctorById,
-  getAllCategories,
-  googleAuth
+  getAllSpecializations,
+  googleAuth,
+  favourites,
+  getFavourites,
 };

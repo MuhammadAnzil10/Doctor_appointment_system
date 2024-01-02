@@ -121,7 +121,7 @@ const DoctorRegistration = () => {
             Registration Form{" "}
             <Link to="/doctor">
               <p className="relative self-start inline-block w-auto px-4 py-2 mx-auto mt-0 text-base font-bold text-white bg-indigo-600 border-t border-gray-200 rounded-md shadow-xl sm:mt-1 fold-bold lg:mx-0">
-                Home
+                Login
               </p>
             </Link>
           </h2>

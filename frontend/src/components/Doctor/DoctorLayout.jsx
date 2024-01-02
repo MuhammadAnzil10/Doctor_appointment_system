@@ -6,8 +6,8 @@ import DoctorHeader from "./DoctorHeader";
 import DoctorFooter from "./DoctorFooter";
 
 const DoctorLayout = () => {
-  let doctorInfo = true
-  // let { doctorInfo } = useSelector((state) => state.doctorAuth);
+ 
+  let { doctorInfo } = useSelector((state) => state.doctorAuth);
 
   return doctorInfo ? (
     <>
@@ -17,7 +17,7 @@ const DoctorLayout = () => {
       <DoctorFooter />
     </>
   ) : (
-    <Navigate to="/doctor" />
+    <Navigate to="/doctor/login" />
   );
 };
 

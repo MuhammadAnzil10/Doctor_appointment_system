@@ -42,6 +42,8 @@ import DoctorDetails from "./pages/User/DoctorDetails.jsx";
 import DoctorForgetPassword from "./pages/Doctor/DoctorForgetPassword.jsx";
 import DoctorOtpPage from "./pages/Doctor/DoctorOtpPage.jsx";
 import DoctorResetPassword from "./pages/Doctor/DoctorResetPassword.jsx";
+import DoctorProfile from "./pages/Doctor/DoctorProfile.jsx";
+import Favourites from "./pages/User/Favourites.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -60,6 +62,7 @@ const router = createBrowserRouter(
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/doctors" element={<UserDoctorsLists />} />
           <Route path="/doctor-details/:id" element={<DoctorDetails />} />
+          <Route path="/favourites" element={<Favourites />} />
         </Route>
       </Route>
 
@@ -67,10 +70,7 @@ const router = createBrowserRouter(
 
       <Route path="" element={<AdminPublicRoute />}>
         <Route path="/admin" element={<AdminLogin />} />
-        <Route
-          path="/admin/forget-password"
-          element={<AdminForgetPassword />}
-        />
+        <Route path="/admin/forget-password" element={<AdminForgetPassword />} />
         <Route path="/admin/verify-otp" element={<AdminOtpPage />} />
         <Route path="/admin/reset-password" element={<AdminResetPassword />} />
       </Route>
@@ -89,10 +89,11 @@ const router = createBrowserRouter(
         <Route path="/doctor/forget-password" element={<DoctorForgetPassword />} />
         <Route path="/doctor/verify-otp" element={<DoctorOtpPage />} />
         <Route path="/doctor/reset-password" element={<DoctorResetPassword />} />
-
       </Route>
-      <Route path="/doctor" element={<DoctorLayout />}>
+      <Route path="" element={<DoctorLayout />}>
         <Route index={true} path="/doctor" element={<DoctorHome />} />
+        <Route path="/doctor/doctor-profile" element={<DoctorProfile />} />
+   
       </Route>
     </>
   )
