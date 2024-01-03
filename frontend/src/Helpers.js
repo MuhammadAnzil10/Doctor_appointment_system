@@ -11,11 +11,11 @@ export const doctorFormValidation = (data) => {
     cloudImage,
   } = data;
 
-
   const { street, country, state, pincode, city } = address;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^[6-9]\d{9}$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (name?.trim() === "" || name?.trim()?.length < 3) {
     return false;
@@ -96,4 +96,23 @@ export const userRegisterValidation = (data) => {
       status: true,
     };
   }
+};
+
+export const sort = (filtered, sortOrder) => {
+  const sorted = filtered.sort((a, b) => {
+    if (sortOrder === "Asc") {
+      return a.name.localeCompare(b.name);
+    } else {
+      return b.name.localeCompare(a.name);
+    }
+  });
+  return sorted;
+};
+
+export const filter = (itemsPerPage, currentPage, filteredDoctors) => {
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredDoctors.slice(indexOfFirstItem, indexOfLastItem);
+
+  return {currentItems,indexOfLastItem};
 };

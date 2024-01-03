@@ -4,6 +4,7 @@ import {
   useGetAllSpecializationsQuery,
 } from "../../UserSlices/usersApiSlice";
 import { useState, useEffect } from "react";
+import { filter, sort } from "../../Helpers";
 
 const UserDoctorsLists = () => {
   const [searchText, setSearchText] = useState("");
@@ -14,7 +15,7 @@ const UserDoctorsLists = () => {
   const [filteredDoctors, setFileteredDoctors] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [sortOrder, setSortOrder] = useState("Asc");
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (doctors) {
@@ -34,21 +35,12 @@ const UserDoctorsLists = () => {
       return matchSpecialization && matchDocter;
     });
 
-    const sortedDoctors = filtered.sort((a, b) => {
-      if (sortOrder === "Asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-
+    const sortedDoctors = sort(filtered, sortOrder);
     setFileteredDoctors(sortedDoctors);
+
   }, [searchText, allDoctors, selectedSpecialization, sortOrder]);
 
-  const indexOfLastItem = currentPage * 5
-  const indexOfFirstItem = indexOfLastItem - 5
-  const currentItems = filteredDoctors.slice(indexOfFirstItem,indexOfLastItem)
-
+  const {currentItems,indexOfLastItem} = filter(1,currentPage,filteredDoctors)
   return (
     <div className="p-3 m-4 min-h-screen">
       <div className="bg-red-200">
@@ -102,20 +94,27 @@ const UserDoctorsLists = () => {
         )}
       </div>
       <div className="flex justify-center mt-4">
-        <button onClick={e=>setCurrentPage(currentPage-1)} disabled={currentPage === 1}
-         className={`${
-          currentPage === 1 ? 'text-gray-500' : 'text-gray-800'
-        } bg-gray-300 hover:bg-gray-400 font-bold py-2 px-4 rounded-l`}
-      
-           >Prev</button>
-        
-        <button onClick={e=>setCurrentPage(currentPage+1)}
+        <button
+          onClick={(e) => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`${
+            currentPage === 1 ? "text-gray-500" : "text-gray-800"
+          } bg-gray-300 hover:bg-gray-400 font-bold py-2 px-4 rounded-l`}
+        >
+          Prev
+        </button>
+
+        <button
+          onClick={(e) => setCurrentPage(currentPage + 1)}
           disabled={indexOfLastItem >= filteredDoctors.length}
           className={`${
-            indexOfLastItem >= filteredDoctors.length ? 'text-gray-500' : 'text-gray-800'
+            indexOfLastItem >= filteredDoctors.length
+              ? "text-gray-500"
+              : "text-gray-800"
           } bg-gray-300 hover:bg-gray-400 font-bold py-2 px-4 rounded-r`}
-        
-          >Next</button>
+        >
+          Next
+        </button>
       </div>
     </div>
   );

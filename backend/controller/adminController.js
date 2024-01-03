@@ -43,11 +43,14 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 const blockUser = asyncHandler(async (req, res) => {
   const id = req.params.id;
+
   const user = await User.findById(id);
   if (!user) {
     res.status(401);
     throw new Error("User not found");
   }
+
+
   user.isBlocked = true;
   user.save();
 
@@ -66,7 +69,7 @@ const unBlockUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
   user.isBlocked = false;
-  user.save();
+  await user.save();
 
   res.status(200);
   res.json({
