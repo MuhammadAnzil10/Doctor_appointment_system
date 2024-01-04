@@ -13,23 +13,31 @@ import { logout } from "../../UserSlices/authSlice.js";
 const UserProfile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [age, setAge] = useState("");
+  const [phone, setPhone] = useState("");
+  const [bloodGroup, setBloodGroup] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo);
+
   const [updateProfile, { isLoading }] = useUpdateUserMutation();
   const [logoutApiCall] = useLogoutMutation();
 
   useEffect(() => {
     setName(userInfo.name);
     setEmail(userInfo.email);
+    setAge(userInfo.age)
+    setPhone(userInfo.phone)
+    setBloodGroup(userInfo.bloodGroup)
   }, [userInfo.name, userInfo.email]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
-
+    if(age < 18){
+      return toast.error('Age Must be 18 over')
+    }
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
     } else {
@@ -38,13 +46,16 @@ const UserProfile = () => {
           _id: userInfo._id,
           name,
           email,
+          age,
+          phone,
+          bloodGroup,
           password,
         }).unwrap();
 
         dispatch(setCredentials({ ...res }));
         toast.success("Profile Updated");
-      } catch (error) {
-        toast.error(err?.data?.message || err.message);
+      } catch (err) {
+        toast.error(err?.data?.message || err.error);
       }
     }
   };
@@ -114,6 +125,66 @@ const UserProfile = () => {
                     autoComplete="false"
                     onChange={(e) => {
                       setEmail(e.target.value);
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="age"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Your Age
+                  </label>
+                  <input
+                    type="text"
+                    name="age"
+                    id="age"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Enter your age"
+                    value={age}
+                    autoComplete="false"
+                    onChange={(e) => {
+                      setAge(e.target.value);
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="phone"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Your Phone
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Enter your phone"
+                    value={phone}
+                    autoComplete="false"
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="bloodGroup"
+                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Your Blood Group
+                  </label>
+                  <input
+                    type="text"
+                    name="bloodGroup"
+                    id="bloodGroup"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Enter your Blood Group"
+                    value={bloodGroup}
+                    autoComplete="false"
+                    onChange={(e) => {
+                      setBloodGroup(e.target.value);
                     }}
                   />
                 </div>

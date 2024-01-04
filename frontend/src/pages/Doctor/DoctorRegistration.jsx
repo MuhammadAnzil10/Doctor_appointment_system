@@ -41,21 +41,19 @@ const DoctorRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (
-      !doctorFormValidation({
-        name,
-        email,
-        phone,
-        address,
-        qualification,
-        experience,
-        specialization,
-        password,
-        cloudImage,
-      })
-    ) {
-      return toast("Please Enter Valid Input");
+    const {message,status} = doctorFormValidation({
+      name,
+      email,
+      phone,
+      address,
+      qualification,
+      experience,
+      specialization,
+      password,
+      cloudImage,
+    })
+    if (!status) {
+      return toast(message);
     }
 
     try {

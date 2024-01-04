@@ -9,7 +9,7 @@ import Doctor from "../model/doctorModel.js";
 import generateVerificationMail from "../utils/generateVerificationMail.js";
 
 const adminLogin = asyncHandler(async (req, res) => {
-  let { email, password } = req.body;
+  const { email, password } = req.body;
 
   const admin = await Admin.findOne({ email });
 

@@ -11,34 +11,51 @@ export const doctorFormValidation = (data) => {
     cloudImage,
   } = data;
 
-  const { street, country, state, pincode, city } = address;
+  const { street, country, state, zipcode, city } = address;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^[6-9]\d{9}$/;
+  const nameRegex = /^[A-Za-z]{3,}$/;
+  const addressRegex = /^[A-Za-z0-9]+$/;
+  const charRegex = /^[A-Za-z]+$/;
+
+  const experienceRegex = /^[0-9]+$/;
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-  if (name?.trim() === "" || name?.trim()?.length < 3) {
-    return false;
-  } else if (email?.trim() === "" || !emailRegex?.test(email?.trim())) {
-    return false;
+console.log(specialization.length);
+console.log(cloudImage.length);
+  if (!nameRegex.test(name)) {
+    return {
+      status: false,
+      message: "Please Provide valid name(length more than 3 character)",
+    };
+  } else if (!emailRegex?.test(email)) {
+    return { status: false, message: "Please Provide valid Email" };
   } else if (!phoneRegex.test(phone)) {
-    return false;
-  } else if (
-    street?.trim() === "" ||
-    country?.trim() === "" ||
-    state?.trim() === "" ||
-    pincode?.trim() === "" ||
-    city?.trim() === ""
-  ) {
-    return false;
-  } else if (
-    qualification?.trim() === "" ||
-    experience?.trim() === "" ||
-    specialization?.trim() === "" ||
-    passwordRegex.test(password) ||
-    cloudImage?.trim() === ""
-  ) {
-    return false;
+    return { status: false, message: "Please Provide valid Phone number" };
+  } else if (!addressRegex.test(street)) {
+    return { status: false, message: "Please Provide valid Street name" };
+  } else if (!addressRegex.test(city)) {
+    return { status: false, message: "Please provide valid City" };
+  } else if (!charRegex.test(country)) {
+    return { status: false, message: "Please provide valid Country name" };
+  } else if (!charRegex.test(state)) {
+    return { status: false, message: "Please provide valid State name" };
+  } else if (zipcode.length !== 6) {
+    return { status: false, message: "Please provide valid zipcode" };
+  } else if ((!qualification, length === "")) {
+    return { status: false, message: "Please provide valid Qualification" };
+  } else if (!experienceRegex.test(experience)) {
+    return { status: false, message: "Please provide valid Year" };
+  }  else if (specialization.trim() === '' || cloudImage.trim() === '') {
+    return {
+      status: false,
+      message: "Please Provide valid Image and specialization ",
+    };
+  } else if (!passwordRegex.test(password)) {
+    return {
+      status: false,
+      message: "Please provide valid Password(Min Length 8)",
+    };
   } else {
     return true;
   }
@@ -114,5 +131,5 @@ export const filter = (itemsPerPage, currentPage, filteredDoctors) => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredDoctors.slice(indexOfFirstItem, indexOfLastItem);
 
-  return {currentItems,indexOfLastItem};
+  return { currentItems, indexOfLastItem };
 };

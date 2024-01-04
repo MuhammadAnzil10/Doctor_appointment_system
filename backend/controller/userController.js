@@ -16,13 +16,18 @@ const login = asyncHandler(async (req, res) => {
     throw new Error("You have been blocked by Administrator");
   }
 
-  if (user && (await user.matchPassword(password))) {
+  const passwordMatch = await user.matchPassword(password);
+  if (user && passwordMatch) {
     generateToken(res, user._id);
-    return res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    });
+    const {
+      password: hashedPassword,
+      verificationCode,
+      createdAt,
+      updatedAt,
+      ...rest
+    } = user._doc;
+
+    return res.status(201).json(rest);
   } else {
     res.status(401);
     throw new Error("Invalid email or password");
@@ -31,7 +36,6 @@ const login = asyncHandler(async (req, res) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, phone, age, password, bloodGroup } = req.body;
-
   const userExist = await User.findOne({ $or: [{ email }, { phone }] });
   if (userExist) {
     res.status(400);
@@ -51,6 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const status = await generateMail(verificationCode, email);
 
+  
   if (status?.success) {
     return res.status(200).json({
       message:
@@ -82,10 +87,16 @@ const verifyOtp = asyncHandler(async (req, res) => {
   user.isVerified = true;
   await user.save();
   generateToken(res, user._id);
+  const {
+    password: hashedPassword,
+    verificationCode:Verification,
+    createdAt,
+    updatedAt,
+    ...rest
+  } = user._doc;
+
   return res.status(201).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
+    ...rest,
     message: "Account verified successfully.",
   });
 });
@@ -111,19 +122,40 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
+  const UserByMail = await User.findOne({email:req.body.email});
+  const UserByPhone = await User.findOne({phone:req.body.phone});
+  
+  if(UserByMail && user.email !== UserByMail.email){
+    res.status(400)
+    throw new Error('User already existed')
+  }
+  if(UserByPhone && UserByPhone.phone !== user.phone){
+    res.status(400)
+    throw new Error('The phone number has been used');
+  }
 
   if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    user.phone = req.body.phone || user.phone;
+    user.age = req.body.age || user.age;
+    user.bloodGroup = req.body.bloodGroup || user.bloodGroup;
+
 
     if (req.body.password) {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
+    const {
+      password: hashedPassword,
+      verificationCode:Verification,
+      createdAt,
+      updatedAt,
+      ...rest
+    } = updatedUser._doc;
+ 
     return res.status(200).json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
+      ...rest
     });
   } else {
     res.status(404);
@@ -268,11 +300,14 @@ const googleAuth = asyncHandler(async (req, res) => {
 
   if (user) {
     generateToken(res, user._id);
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    });
+    const {
+      password: hashedPassword,
+      verificationCode,
+      createdAt,
+      updatedAt,
+      ...rest
+    } = user._doc;
+    return res.status(201).json(rest);
   } else {
     const generatedPassword =
       Math.random().toString(36).slice(-8) +
@@ -287,18 +322,22 @@ const googleAuth = asyncHandler(async (req, res) => {
       isVerified: true,
     });
     generateToken(res, newUser._id);
-
-    res.status(201).json({
-      _id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
-    });
+    const {
+      password: hashedPassword,
+      verificationCode,
+      createdAt,
+      updatedAt,
+      ...rest
+    } = newUser._doc;
+    return res.status(201).json(rest);
   }
 });
 
 const favourites = asyncHandler(async (req, res) => {
   const doctorId = req.body.id;
-  let userFavourites = await FavoriteDoctor.findOne({ user: req.user._id }).populate({
+  let userFavourites = await FavoriteDoctor.findOne({
+    user: req.user._id,
+  }).populate({
     path: "doctor.doctorId",
     populate: { path: "specialization" },
   });
@@ -333,10 +372,11 @@ const favourites = asyncHandler(async (req, res) => {
       updatedFavourites: userFavourites,
     });
   } else {
-
-    userFavourites.doctor.push({ doctorId })
+    userFavourites.doctor.push({ doctorId });
     await userFavourites.save();
-     userFavourites = await FavoriteDoctor.findOne({ user: req.user._id }).populate({
+    userFavourites = await FavoriteDoctor.findOne({
+      user: req.user._id,
+    }).populate({
       path: "doctor.doctorId",
       populate: { path: "specialization" },
     });

@@ -19,6 +19,9 @@ const UserLogin = () => {
 
   const submitHandler = async (event) => {
     event.preventDefault();
+    if(email === "" || password === ''){
+      return toast.error('Please provide valid input')
+    }
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));

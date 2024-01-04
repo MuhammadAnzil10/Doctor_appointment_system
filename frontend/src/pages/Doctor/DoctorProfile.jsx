@@ -26,15 +26,15 @@ useEffect(()=>{
       <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
         <div className="p-2 md:p-4">
           <div className="w-full  px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
-            <h2 className="pl-6 text-2xl font-bold ml-52 sm:text-red-600 lg:text-green-500  sm:text-xl">
+            <h2 className="pl-6 text-2xl font-bold flex xl:mr-6  justify-center  sm:text-xl">
               Profile
             </h2>
             <div className="grid max-w-2xl mx-auto mt-8">
               <div className="flex flex-col items-cente justify-center  space-y-5 sm:flex-row sm:space-y-0">
                 <img
-                  className="object-cover w-20 h-20 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
+                  className="object-cover w-20 h-20  mx-auto p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
                   src={image}
-                  alt="Bordered avatar"
+                  alt="Profile Picture"
                 />
               </div>
               <div className="items-center mt-8 sm:mt-14 text-[#202142]">
@@ -53,6 +53,7 @@ useEffect(()=>{
                       placeholder="Your full name"
                       value={name}
                       disabled
+                      onChange={e=>setName(e.target.value)}
                     />
                   </div>
                 </div>
@@ -69,6 +70,7 @@ useEffect(()=>{
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                     placeholder="your.email@mail.com"
                     value={email}
+                    onChange={e=>setEmail(e.target.value)}
                   
                   />
                 </div>
@@ -85,7 +87,7 @@ useEffect(()=>{
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                     placeholder="your phone"
                     value={phone}
-               
+                    onChange={e=>setPhone(e.target.value)}
                   />
                 </div>
                 <div className="mb-2 sm:mb-6">
@@ -101,7 +103,7 @@ useEffect(()=>{
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                     placeholder="qualification"
                     value={qualification}
-               
+                    onChange={e=>setQualification(e.target.value)}
                   />
                 </div>
                 <div className="mb-2 sm:mb-6">
@@ -117,7 +119,7 @@ useEffect(()=>{
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                     placeholder="experience"
                     value={experience}
-               
+                    onChange={e=>setExperience(e.target.value)}
                   />
                 </div>
                 <div className="mb-2 sm:mb-6">
@@ -133,16 +135,17 @@ useEffect(()=>{
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                     placeholder="specializaton"
                     value={specialization}
-               
+                    disabled
+                    onChange={e=>setSpecialization(e.target.value)}
                   />
                 </div>
              
-                <div className="flex justify-end">
+                <div className="flex justify-center">
                   <button
                     type="submit"
                     className="text-white bg-indigo-700  hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
                   >
-                    Save
+                    Update
                   </button>
                 </div>
               </div>

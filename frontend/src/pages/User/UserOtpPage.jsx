@@ -106,6 +106,7 @@ const UserOtpPage = () => {
       if(!resetPassword){
         const res = await verifyOtp({ email, verificationCode }).unwrap();
         const { message, ...rest } = res;
+  
         dispatch(setCredentials({ ...rest }));
         toast.success(message);
         navigate("/");

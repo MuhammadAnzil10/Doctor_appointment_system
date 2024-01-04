@@ -12,7 +12,7 @@ const UserDoctorsLists = () => {
   const { data: specializations, refetch: refetchData } =
     useGetAllSpecializationsQuery();
   const [allDoctors, setAllDoctors] = useState(doctors || []);
-  const [filteredDoctors, setFileteredDoctors] = useState([]);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [selectedSpecialization, setSelectedSpecialization] = useState("");
   const [sortOrder, setSortOrder] = useState("Asc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,7 +20,7 @@ const UserDoctorsLists = () => {
   useEffect(() => {
     if (doctors) {
       setAllDoctors(doctors);
-      setFileteredDoctors(doctors);
+      setFilteredDoctors(doctors);
     }
   }, [doctors]);
 
@@ -36,11 +36,12 @@ const UserDoctorsLists = () => {
     });
 
     const sortedDoctors = sort(filtered, sortOrder);
-    setFileteredDoctors(sortedDoctors);
+    setFilteredDoctors(sortedDoctors);
 
   }, [searchText, allDoctors, selectedSpecialization, sortOrder]);
 
-  const {currentItems,indexOfLastItem} = filter(1,currentPage,filteredDoctors)
+  const {currentItems,indexOfLastItem} = filter(5,currentPage,filteredDoctors)
+
   return (
     <div className="p-3 m-4 min-h-screen">
       <div className="bg-red-200">

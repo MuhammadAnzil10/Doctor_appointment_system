@@ -3,11 +3,13 @@ import { useSelector,useDispatch } from "react-redux";
 import { doctorLogout } from "../../DoctorSlices/DoctorAuthSlice.js";
 import { useLogoutDoctorMutation } from "../../DoctorSlices/doctorApiSlice.js";
 import { toast } from "react-toastify"
-
+import { useState } from "react";
+import '../../../node_modules/font-awesome/css/font-awesome.min.css'
 
 const DoctorHeader = ()=>{
  const {doctorInfo} = useSelector((state)=>state.doctorAuth)
  const [logoutDoctor,{isLoading}] = useLogoutDoctorMutation()
+ const [toggle, setToggle] = useState(false)
  const dispatch = useDispatch()
 const handleClick =async(e)=>{
     e.preventDefault()
@@ -21,6 +23,11 @@ const handleClick =async(e)=>{
     }
 }
 
+const toggleNavbar = async()=>{
+  setToggle(!toggle)
+}
+
+
 
   return (
     <div className="header-2">
@@ -33,12 +40,13 @@ const handleClick =async(e)=>{
           <button
             className="border border-solid border-gray-600 px-3 py-1 rounded text-gray-600 opacity-50 hover:opacity-75 md:hidden"
             id="navbar-toggle"
+            onClick={toggleNavbar}
           >
-            <i className="fas fa-bars" />
+            <i className="fa fa-bars"></i>
           </button>
         </div>
         <div
-          className="hidden md:flex flex-col md:flex-row md:ml-auto mt-3 md:mt-0"
+          className={ toggle ? "md:flex flex justify-center md:flex-row md:ml-auto mt-3 md:mt-0" :"md:flex justify-center md:flex-row md:ml-auto mt-3 md:mt-0 hidden" }
           id="navbar-collapse"
         >
           <Link
