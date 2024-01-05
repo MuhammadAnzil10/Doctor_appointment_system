@@ -45,6 +45,13 @@ const doctorApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateDoctorProfile:builder.mutation({
+      query:(data)=>({
+         url:`${DOCTOR_URL}/doctor-profile`,
+         method:"PUT",
+         body:data
+      })
+    })
   }),
 });
 
@@ -54,5 +61,6 @@ export const {
   useLogoutDoctorMutation,
   useDoctorForgetPasswordMutation,
   useDoctorOtpVerifyMutation,
-  useDoctorResetPasswordMutation
+  useDoctorResetPasswordMutation,
+  useUpdateDoctorProfileMutation
 } = doctorApiSlice;

@@ -173,6 +173,7 @@ const doctorResetPassword = asyncHandler(async (req, res) => {
 });
 
 const getDoctorProfile = asyncHandler(async (req, res) => {
+
   const doctor = {
     name: req.doctor.name,
     email: req.doctor.email,
@@ -186,9 +187,9 @@ const getDoctorProfile = asyncHandler(async (req, res) => {
 });
 
 const editDoctorProfile = asyncHandler(async (req, res) => {
-  const doctor = await Doctor.findById(req.doctor._id).select('-__v -isVerified -isBlocked -verificationCode -address');
+  const doctor = await Doctor.findById(req.doctor._id).select('-__v -isVerified -isBlocked -verificationCode -address').populate('specialization');
 
-
+console.log(req.body);
   if (!doctor) {
     res.status(404);
     throw new Error("User not found");
@@ -205,8 +206,10 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
   }
 
     const updatedDoctor = await doctor.save();
-    const {password,...rest} = updatedDoctor._doc
+    const {password,specialization,...rest} = updatedDoctor._doc
+   
     res.status(200).json({
+      specialization:specialization.name,
       ...rest
     })
 
