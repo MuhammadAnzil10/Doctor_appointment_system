@@ -94,6 +94,13 @@ export const adminApiSlices = apiSlice.injectEndpoints({
           url:`${ADMIN_URL}/unblock-doctor/${id}`,
           method:"PUT"
       })
+    }),
+    updateAdminProfile:builder.mutation({
+      query:(data)=>({
+        url:`${ADMIN_URL}/admin-profile`,
+        method:'PUT',
+        body:data
+      })
     })
   }),
 });
@@ -112,7 +119,8 @@ export const {
   useGetAllDoctorsQuery,
   useVerifyDoctorMutation,
   useBlockDoctorMutation,
-  useUnBlockDoctorMutation
+  useUnBlockDoctorMutation,
+  useUpdateAdminProfileMutation
   
 
 } = adminApiSlices;

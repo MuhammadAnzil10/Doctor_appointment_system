@@ -11,8 +11,8 @@ const adminProtect =asyncHandler( async(req,res,next)=>{
   if(token){
     try {
       const decoded =  jwt.verify(token,process.env.ADMIN_JWT_SECRET)
-      
-      req.admin = await Admin.findById(decoded.userId).select("-password");
+    
+      req.admin = await Admin.findById(decoded.adminId).select("-password");
 
       next();
     } catch (error) {

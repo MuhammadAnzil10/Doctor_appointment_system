@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 
 
-const AdminLayout =()=>{
+const AdminPrivateRoute =()=>{
   let {adminInfo} = useSelector((state)=>state.adminAuth)
 
   return adminInfo ? (
@@ -20,4 +20,4 @@ const AdminLayout =()=>{
   ) : <Navigate to='/admin' />
 }
 
-export default AdminLayout;
+export default AdminPrivateRoute;

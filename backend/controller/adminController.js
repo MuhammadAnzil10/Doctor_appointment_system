@@ -50,7 +50,6 @@ const blockUser = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 
-
   user.isBlocked = true;
   user.save();
 
@@ -217,7 +216,7 @@ const blockDoctor = asyncHandler(async (req, res) => {
   }
 
   doctor.isBlocked = true;
-  
+
   doctor.save();
   res.status(200);
   res.json({
@@ -243,6 +242,42 @@ const unBlockDoctor = asyncHandler(async (req, res) => {
   });
 });
 
+const getAdminProfile = asyncHandler(async (req, res) => {
+  const admin = await Admin.findById(req.admin._id).select(
+    "-password -isVerified -createdAt -verificationCode -__v"
+  );
+
+  res.status(200).json(admin);
+});
+
+const editAdminProfile = asyncHandler(async (req, res) => {
+  const admin = await Admin.findById(req.admin._id);
+  const { name, email, password } = req.body;
+
+  if (!admin) {
+    res.status(401);
+    throw new Error("Not authorise");
+  }
+  admin.name = name || admin.name;
+  admin.email = email || admin.email;
+
+  if (password) {
+    admin.password = password;
+  }
+
+  await admin.save();
+  const {
+    password: hashedPassword,
+    verificationCode,
+    createdAt,
+    isVerified,
+    __v,
+    ...rest
+  } = admin._doc;
+  console.log(rest);
+  res.json(rest);
+});
+
 export {
   adminLogin,
   adminLogout,
@@ -258,4 +293,6 @@ export {
   verifyDoctor,
   blockDoctor,
   unBlockDoctor,
+  getAdminProfile,
+  editAdminProfile,
 };

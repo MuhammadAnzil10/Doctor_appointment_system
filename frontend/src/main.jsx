@@ -22,7 +22,7 @@ import {
   RouterProvider,
   Routes,
 } from "react-router-dom";
-import AdminLayout from "./components/Admin/AdminLayout.jsx";
+import AdminPrivateRoute from "./components/Admin/AdminPrivateRoute.jsx";
 import Dashboard from "./pages/Admin/Dashboard.jsx";
 import AdminPublicRoute from "./components/Admin/AdminPublicRoute.jsx";
 import UsersLists from "./pages/Admin/UsersLists.jsx";
@@ -44,6 +44,7 @@ import DoctorOtpPage from "./pages/Doctor/DoctorOtpPage.jsx";
 import DoctorResetPassword from "./pages/Doctor/DoctorResetPassword.jsx";
 import DoctorProfile from "./pages/Doctor/DoctorProfile.jsx";
 import Favourites from "./pages/User/Favourites.jsx";
+import AdminProfile from "./pages/Admin/AdminProfile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -74,8 +75,9 @@ const router = createBrowserRouter(
         <Route path="/admin/verify-otp" element={<AdminOtpPage />} />
         <Route path="/admin/reset-password" element={<AdminResetPassword />} />
       </Route>
-      <Route path="" element={<AdminLayout />}>
+      <Route path="" element={<AdminPrivateRoute />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
+        <Route path="/admin/admin-profile" element={<AdminProfile />} />
         <Route path="/admin/users" element={<UsersLists />} />
         <Route path="/admin/specializations" element={<SpecializationList />} />
         <Route path="/admin/specialization" element={<Specialization />} />
