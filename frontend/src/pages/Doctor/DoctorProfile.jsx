@@ -10,6 +10,8 @@ const [qualification, setQualification] = useState('');
 const [experience, setExperience] = useState('');
 const [image, setImage] = useState('');
 const [specialization, setSpecialization] = useState('');
+const [password, setPassword] = useState('')
+const [confirmPassword, setConfirmPassowrd] = useState('')
 
 useEffect(()=>{
     setName(doctorInfo.name);
@@ -21,6 +23,14 @@ useEffect(()=>{
     setSpecialization(doctorInfo.specialization);
 },[doctorInfo])
 
+const handleSubmit =(e)=>{
+e.preventDefault();
+
+console.log(namex);
+
+}
+
+
   return (
     <div className="bg-white w-full flex flex-col justify-center gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
       <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
@@ -30,6 +40,7 @@ useEffect(()=>{
               Profile
             </h2>
             <div className="grid max-w-2xl mx-auto mt-8">
+              <form  onSubmit={handleSubmit}>
               <div className="flex flex-col items-cente justify-center  space-y-5 sm:flex-row sm:space-y-0">
                 <img
                   className="object-cover w-20 h-20  mx-auto p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
@@ -135,8 +146,43 @@ useEffect(()=>{
                     className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
                     placeholder="specializaton"
                     value={specialization}
+                    autoComplete='none'
                     disabled
                     onChange={e=>setSpecialization(e.target.value)}
+                  />
+                </div>
+                <div className="mb-2 sm:mb-6">
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-indigo-900 dark:text-black"
+                  >
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                    placeholder="*******"
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={e=>setPassword(e.target.value)}
+                  />
+                </div>
+                <div className="mb-2 sm:mb-6">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block mb-2 text-sm font-medium text-indigo-900 dark:text-black"
+                  >
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                    placeholder="*******"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={e=>setConfirmPassowrd(e.target.value)}
                   />
                 </div>
              
@@ -149,6 +195,7 @@ useEffect(()=>{
                   </button>
                 </div>
               </div>
+              </form>
             </div>
           </div>
         </div>
