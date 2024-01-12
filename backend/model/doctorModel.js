@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcryptjs from 'bcryptjs'
+import bcryptjs from "bcryptjs";
 
 const doctorSchema = new mongoose.Schema({
   name: {
@@ -17,7 +17,7 @@ const doctorSchema = new mongoose.Schema({
   },
   images: {
     type: String,
-    required:true
+    required: true,
   },
   address: {
     street: {
@@ -51,7 +51,7 @@ const doctorSchema = new mongoose.Schema({
   },
   specialization: {
     type: mongoose.Schema.Types.ObjectId,
-    ref:"Specialization"
+    ref: "Specialization",
   },
   password: {
     type: String,
@@ -65,12 +65,22 @@ const doctorSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  verificationCode:{
-    type:String,
-    default:''
-  }
-});
+  verificationCode: {
+    type: String,
+    default: "",
+  },
+  reviews: [{ type: mongoose.Types.ObjectId, ref: "Review" }],
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
+  totalRating: {
+    type: Number,
+    default: 0,
+  },
 
+  appointments: [{ type: mongoose.Types.ObjectId, ref: "Appointment" }],
+});
 
 doctorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -81,15 +91,10 @@ doctorSchema.pre("save", async function (next) {
   this.password = await bcryptjs.hash(this.password, salt);
 });
 
-doctorSchema.methods.matchPassword=async function(enteredPassword ){
-console.log(await bcryptjs.compare(enteredPassword,this.password));
-  return await bcryptjs.compare(enteredPassword,this.password)
-
-}
-
-
-
-
+doctorSchema.methods.matchPassword = async function (enteredPassword) {
+  console.log(await bcryptjs.compare(enteredPassword, this.password));
+  return await bcryptjs.compare(enteredPassword, this.password);
+};
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
 

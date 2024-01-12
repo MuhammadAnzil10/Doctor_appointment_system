@@ -3,6 +3,7 @@ import generateMail from "../utils/generateMail.js";
 import generateOtp from "../utils/generateOtp.js";
 import Doctor from "../model/doctorModel.js";
 import generateDoctorToken from "../utils/doctorToken.js";
+import Slot from "../model/slotModel.js";
 
 const doctorRegister = asyncHandler(async (req, res) => {
   const {
@@ -52,7 +53,7 @@ const doctorRegister = asyncHandler(async (req, res) => {
 const doctorLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const doctor = await Doctor.findOne({ email }).populate('specialization');
+  const doctor = await Doctor.findOne({ email }).populate("specialization");
 
   if (!doctor) {
     res.status(401);
@@ -73,14 +74,14 @@ const doctorLogin = asyncHandler(async (req, res) => {
       _id: doctor._id,
       name: doctor.name,
       email: doctor.email,
-      phone:doctor.phone,
-      qualification:doctor.qualification,
-      specialization:doctor.specialization.name,
-      images:doctor.images,
-      experience:doctor.experience
+      phone: doctor.phone,
+      qualification: doctor.qualification,
+      specialization: doctor.specialization.name,
+      images: doctor.images,
+      experience: doctor.experience,
     });
   } else {
-    res.status(401)
+    res.status(401);
     throw new Error("Password not match");
   }
 });
@@ -173,7 +174,6 @@ const doctorResetPassword = asyncHandler(async (req, res) => {
 });
 
 const getDoctorProfile = asyncHandler(async (req, res) => {
-
   const doctor = {
     name: req.doctor.name,
     email: req.doctor.email,
@@ -187,9 +187,11 @@ const getDoctorProfile = asyncHandler(async (req, res) => {
 });
 
 const editDoctorProfile = asyncHandler(async (req, res) => {
-  const doctor = await Doctor.findById(req.doctor._id).select('-__v -isVerified -isBlocked -verificationCode -address').populate('specialization');
+  const doctor = await Doctor.findById(req.doctor._id)
+    .select("-__v -isVerified -isBlocked -verificationCode -address")
+    .populate("specialization");
 
-console.log(req.body);
+  console.log(req.body);
   if (!doctor) {
     res.status(404);
     throw new Error("User not found");
@@ -200,19 +202,45 @@ console.log(req.body);
   doctor.qualification = req.body.qualification || doctor.qualification;
   doctor.experience = req.body.experience || doctor.experience;
   doctor.specialization = req.body.specialization || doctor.specialization;
-   
-  if(req.body.password){
+
+  if (req.body.password) {
     doctor.password = req.body.password;
   }
 
-    const updatedDoctor = await doctor.save();
-    const {password,specialization,...rest} = updatedDoctor._doc
-   
-    res.status(200).json({
-      specialization:specialization.name,
-      ...rest
-    })
+  const updatedDoctor = await doctor.save();
+  const { password, specialization, ...rest } = updatedDoctor._doc;
 
+  res.status(200).json({
+    specialization: specialization.name,
+    ...rest,
+  });
+});
+
+const createSlot = asyncHandler(async (req, res) => {
+  const { date, startTime, endTime, doctorId } = req.body;
+
+  const existingSlot = await Slot.findOne({
+    date: new Date(date),
+    startTime,
+    endTime,
+  });
+
+  if (existingSlot) {
+    res.status(400);
+    throw new Error("This slot already exists");
+  }
+  if (startTime > endTime) {
+    res.status(400);
+    throw new Error("Please select correct time range");
+  }
+
+  const newSlot = await Slot.create({
+    doctor: doctorId,
+    date: new Date(date),
+    startTime,
+    endTime,
+  });
+  return res.json(newSlot);
 });
 
 export {
@@ -224,4 +252,5 @@ export {
   doctorResetPassword,
   getDoctorProfile,
   editDoctorProfile,
+  createSlot,
 };

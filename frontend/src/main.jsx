@@ -45,6 +45,7 @@ import DoctorResetPassword from "./pages/Doctor/DoctorResetPassword.jsx";
 import DoctorProfile from "./pages/Doctor/DoctorProfile.jsx";
 import Favourites from "./pages/User/Favourites.jsx";
 import AdminProfile from "./pages/Admin/AdminProfile.jsx";
+import SlotPage from "./pages/Doctor/SlotPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -95,7 +96,8 @@ const router = createBrowserRouter(
       <Route path="" element={<DoctorLayout />}>
         <Route index={true} path="/doctor" element={<DoctorHome />} />
         <Route path="/doctor/doctor-profile" element={<DoctorProfile />} />
-   
+        <Route path="/doctor/slots" element={<SlotPage />} />
+        
       </Route>
     </>
   )

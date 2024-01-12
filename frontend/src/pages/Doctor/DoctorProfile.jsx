@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useUpdateDoctorProfileMutation } from "../../DoctorSlices/doctorApiSlice.js";
 import { setDoctorCredential } from "../../DoctorSlices/DoctorAuthSlice.js";
+import Slot from "../../components/Doctor/Slot.jsx";
 const DoctorProfile = () => {
   const { doctorInfo } = useSelector((state) => state.doctorAuth);
   const [name, setName] = useState("");
@@ -14,6 +15,9 @@ const DoctorProfile = () => {
   const [specialization, setSpecialization] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassowrd] = useState("");
+  const [show, setShow] = useState(false);
+  const [minDate, setMinDate] = useState("");
+  const [slot, setSlot] = useState({});
   const dispatch = useDispatch();
   const [updateDoctorProfile, { isLoading }] = useUpdateDoctorProfileMutation();
   useEffect(() => {
@@ -24,6 +28,11 @@ const DoctorProfile = () => {
     setQualification(doctorInfo.qualification);
     setImage(doctorInfo.images);
     setSpecialization(doctorInfo.specialization);
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const formattedTime = tomorrow.toISOString().split("T")[0];
+    setMinDate(formattedTime);
   }, [doctorInfo]);
 
   const handleSubmit = async (e) => {
@@ -41,8 +50,8 @@ const DoctorProfile = () => {
         password,
       }).unwrap();
 
-      dispatch(setDoctorCredential({...res}));
-      toast.success('Profile Updates successfully')
+      dispatch(setDoctorCredential({ ...res }));
+      toast.success("Profile Updates successfully");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }
@@ -51,8 +60,8 @@ const DoctorProfile = () => {
   return (
     <div className="bg-white w-full flex flex-col justify-center gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
       <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
-        <div className="p-2 md:p-4">
-          <div className="w-full  px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
+        <div className="p-2 md:p-4 flex space-x-4">
+          <div className=" w-full  px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
             <h2 className="pl-6 text-2xl font-bold flex xl:mr-6  justify-center  sm:text-xl">
               Profile
             </h2>
@@ -210,11 +219,21 @@ const DoctorProfile = () => {
                       Update
                     </button>
                   </div>
+                  <div className="flex justify-center mt-2">
+                    <button
+                      onClick={(e) => setShow(!show)}
+                      type="button"
+                      className="text-white bg-indigo-700  hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                    >
+                      Create Slote
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
           </div>
         </div>
+        {show && <Slot minDate={minDate}/>}
       </main>
     </div>
   );
