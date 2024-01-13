@@ -51,6 +51,20 @@ const doctorApiSlice = apiSlice.injectEndpoints({
          method:"PUT",
          body:data
       })
+    }),
+    doctorCreateSlot:builder.mutation({
+      query:(data)=>({
+         url:`${DOCTOR_URL}/create-slot`,
+         method:'POST',
+         body:data
+      })
+    }),
+    getSlotsByDate:builder.mutation({
+      query:(date)=>({
+        url:`${DOCTOR_URL}/slots`,
+        method:"POST",
+        body:date
+      })
     })
   }),
 });
@@ -62,5 +76,7 @@ export const {
   useDoctorForgetPasswordMutation,
   useDoctorOtpVerifyMutation,
   useDoctorResetPasswordMutation,
-  useUpdateDoctorProfileMutation
+  useUpdateDoctorProfileMutation,
+  useDoctorCreateSlotMutation,
+  useGetSlotsByDateMutation
 } = doctorApiSlice;

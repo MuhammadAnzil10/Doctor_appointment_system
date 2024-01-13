@@ -10,7 +10,8 @@ import {
   doctorResetPassword,
   getDoctorProfile,
   editDoctorProfile,
-  createSlot
+  createSlot,
+  getSlotsBydate
 } from "../controller/doctorController.js";
 import { doctorProtect } from "../middleware/doctorAuthMiddleware.js";
 
@@ -21,7 +22,7 @@ router.post("/reset-password", doctorResetPassword);
 router.post("/login", doctorLogin);
 router.post("/logout", doctorLogout);
 router.post('/create-slot',doctorProtect,createSlot)
-
+router.post('/slots',doctorProtect,getSlotsBydate)
 router.route('/doctor-profile').get(doctorProtect,getDoctorProfile).put(doctorProtect,editDoctorProfile)
 
 

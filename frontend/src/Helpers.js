@@ -133,3 +133,21 @@ export const filter = (itemsPerPage, currentPage, filteredDoctors) => {
 
   return { currentItems, indexOfLastItem };
 };
+
+
+
+export const validateSlotForm =(date,startTime,endTime)=>{
+    
+  if(date === ''){
+    return{status:false, message:"Please Provide Date"}
+  }
+  else if(startTime === ''){
+    return{status:false, message:"Please Provide Start Time"}
+  }else if(endTime === ''){
+    return{status:false, message:"Please Provide End Time"}
+  }else if(startTime > endTime){
+    return{status:false, message:"Please Provide Correct time range"}
+  }else{
+    return {status:true}
+  }
+}

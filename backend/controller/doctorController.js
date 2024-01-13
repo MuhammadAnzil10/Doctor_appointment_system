@@ -243,6 +243,14 @@ const createSlot = asyncHandler(async (req, res) => {
   return res.json(newSlot);
 });
 
+const getSlotsBydate = asyncHandler(async (req, res) => {
+  
+  const { slotsDate } = req.body;
+  const slots = await Slot.find({ date: new Date(slotsDate) });
+
+  res.status(200).json(slots);
+});
+
 export {
   doctorRegister,
   doctorLogin,
@@ -253,4 +261,5 @@ export {
   getDoctorProfile,
   editDoctorProfile,
   createSlot,
+  getSlotsBydate,
 };

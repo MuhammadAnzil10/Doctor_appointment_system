@@ -17,7 +17,6 @@ const DoctorProfile = () => {
   const [confirmPassword, setConfirmPassowrd] = useState("");
   const [show, setShow] = useState(false);
   const [minDate, setMinDate] = useState("");
-  const [slot, setSlot] = useState({});
   const dispatch = useDispatch();
   const [updateDoctorProfile, { isLoading }] = useUpdateDoctorProfileMutation();
   useEffect(() => {
@@ -233,7 +232,7 @@ const DoctorProfile = () => {
             </div>
           </div>
         </div>
-        {show && <Slot minDate={minDate}/>}
+        {show && <Slot minDate={minDate} doctorId={doctorInfo._id} />}
       </main>
     </div>
   );
