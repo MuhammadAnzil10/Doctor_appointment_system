@@ -137,7 +137,7 @@ export const filter = (itemsPerPage, currentPage, filteredDoctors) => {
 
 
 export const validateSlotForm =(date,startTime,endTime)=>{
-    
+ 
   if(date === ''){
     return{status:false, message:"Please Provide Date"}
   }
@@ -150,4 +150,12 @@ export const validateSlotForm =(date,startTime,endTime)=>{
   }else{
     return {status:true}
   }
+}
+
+export const setTommorrowDate =()=>{
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const formattedTime = tomorrow.toISOString().split("T")[0];
+
+  return formattedTime
 }

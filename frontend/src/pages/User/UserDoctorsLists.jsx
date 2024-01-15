@@ -85,7 +85,7 @@ const UserDoctorsLists = () => {
           <option value="Desc">Sort Z-A</option>
         </select>
       </div>
-      <div className=" p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 ">
+      <div className=" p-6 grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-6 ">
         {currentItems.length > 0 ? (
           currentItems.map((doctor, index) => (
             <DoctorCards {...doctor} key={index} />

@@ -103,6 +103,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url:`${USERS_URL}/get-favourites`,
         method:"GET"
       })
+    }),
+    getSlotsByDate:builder.query({
+      query:({date,doctorId})=>({
+        url:`${USERS_URL}/slots/${date}/${doctorId}`,
+        method:"GET",
+      })
     })
 
   }),
@@ -123,5 +129,6 @@ export const {
   useGetAllSpecializationsQuery,
   useUserGoogleAuthMutation,
   useFavouriteMutation,
-  useGetFavouriteQuery
+  useGetFavouriteQuery,
+  useGetSlotsByDateQuery
 } = usersApiSlice;

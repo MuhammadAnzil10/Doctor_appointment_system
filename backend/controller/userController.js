@@ -6,6 +6,7 @@ import generateOtp from "../utils/generateOtp.js";
 import Doctor from "../model/doctorModel.js";
 import Specialization from "../model/specialization.js";
 import FavoriteDoctor from "../model/favoritesModel.js";
+import Slot from "../model/slotModel.js";
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -55,7 +56,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const status = await generateMail(verificationCode, email);
 
-  
   if (status?.success) {
     return res.status(200).json({
       message:
@@ -89,7 +89,7 @@ const verifyOtp = asyncHandler(async (req, res) => {
   generateToken(res, user._id);
   const {
     password: hashedPassword,
-    verificationCode:Verification,
+    verificationCode: Verification,
     createdAt,
     updatedAt,
     ...rest
@@ -122,16 +122,16 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  const UserByMail = await User.findOne({email:req.body.email});
-  const UserByPhone = await User.findOne({phone:req.body.phone});
-  
-  if(UserByMail && user.email !== UserByMail.email){
-    res.status(400)
-    throw new Error('User already existed')
+  const UserByMail = await User.findOne({ email: req.body.email });
+  const UserByPhone = await User.findOne({ phone: req.body.phone });
+
+  if (UserByMail && user.email !== UserByMail.email) {
+    res.status(400);
+    throw new Error("User already existed");
   }
-  if(UserByPhone && UserByPhone.phone !== user.phone){
-    res.status(400)
-    throw new Error('The phone number has been used');
+  if (UserByPhone && UserByPhone.phone !== user.phone) {
+    res.status(400);
+    throw new Error("The phone number has been used");
   }
 
   if (user) {
@@ -141,21 +141,20 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     user.age = req.body.age || user.age;
     user.bloodGroup = req.body.bloodGroup || user.bloodGroup;
 
-
     if (req.body.password) {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
     const {
       password: hashedPassword,
-      verificationCode:Verification,
+      verificationCode: Verification,
       createdAt,
       updatedAt,
       ...rest
     } = updatedUser._doc;
- 
+
     return res.status(200).json({
-      ...rest
+      ...rest,
     });
   } else {
     res.status(404);
@@ -401,6 +400,17 @@ const getFavourites = asyncHandler(async (req, res) => {
   return res.status(200).json({ favouriteDoctors });
 });
 
+const getSlotByDate = asyncHandler(async (req, res) => {
+  const { date, doctorId } = req.params;
+
+  const slots = await Slot.find({
+    date: new Date(date),
+    doctor: doctorId,
+  }).select("-__v");
+
+  return res.json(slots);
+});
+
 export {
   login,
   registerUser,
@@ -418,4 +428,5 @@ export {
   googleAuth,
   favourites,
   getFavourites,
+  getSlotByDate,
 };

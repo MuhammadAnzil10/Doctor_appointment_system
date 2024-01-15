@@ -15,7 +15,8 @@ import {
   getAllSpecializations,
   googleAuth,
   favourites,
-  getFavourites
+  getFavourites,
+  getSlotByDate
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -37,6 +38,7 @@ router
   router.get('/doctor-specializations',protect,getAllSpecializations)
   router.post('/favourite',protect,favourites)
   router.get('/get-favourites',protect,getFavourites)
+  router.get('/slots/:date/:doctorId',protect,getSlotByDate)
 
 
 

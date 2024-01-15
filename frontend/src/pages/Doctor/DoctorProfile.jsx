@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import { useUpdateDoctorProfileMutation } from "../../DoctorSlices/doctorApiSlice.js";
 import { setDoctorCredential } from "../../DoctorSlices/DoctorAuthSlice.js";
 import Slot from "../../components/Doctor/Slot.jsx";
+import { setTommorrowDate } from "../../Helpers.js";
+
 const DoctorProfile = () => {
   const { doctorInfo } = useSelector((state) => state.doctorAuth);
   const [name, setName] = useState("");
@@ -17,8 +19,10 @@ const DoctorProfile = () => {
   const [confirmPassword, setConfirmPassowrd] = useState("");
   const [show, setShow] = useState(false);
   const [minDate, setMinDate] = useState("");
+  const [consultaionFee, setConsultaionFee] = useState(0);
   const dispatch = useDispatch();
   const [updateDoctorProfile, { isLoading }] = useUpdateDoctorProfileMutation();
+  console.log(doctorInfo);
   useEffect(() => {
     setName(doctorInfo.name);
     setEmail(doctorInfo.email);
@@ -27,11 +31,9 @@ const DoctorProfile = () => {
     setQualification(doctorInfo.qualification);
     setImage(doctorInfo.images);
     setSpecialization(doctorInfo.specialization);
-
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const formattedTime = tomorrow.toISOString().split("T")[0];
-    setMinDate(formattedTime);
+    setConsultaionFee(doctorInfo.consultaionFee);
+    const formattedDate = setTommorrowDate();
+    setMinDate(formattedDate);
   }, [doctorInfo]);
 
   const handleSubmit = async (e) => {
@@ -47,6 +49,7 @@ const DoctorProfile = () => {
         qualification,
         experience,
         password,
+        consultaionFee,
       }).unwrap();
 
       dispatch(setDoctorCredential({ ...res }));
@@ -155,6 +158,22 @@ const DoctorProfile = () => {
                       placeholder="experience"
                       value={experience}
                       onChange={(e) => setExperience(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-2 sm:mb-6">
+                    <label
+                      htmlFor="experience"
+                      className="block mb-2 text-sm font-medium text-indigo-900 dark:text-black"
+                    >
+                      Consultation Fee
+                    </label>
+                    <input
+                      type="text"
+                      id="consultaionFee"
+                      className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                      placeholder="consultaionFee"
+                      value={consultaionFee}
+                      onChange={(e) => setConsultaionFee(e.target.value)}
                     />
                   </div>
                   <div className="mb-2 sm:mb-6">

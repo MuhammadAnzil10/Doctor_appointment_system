@@ -1,8 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  useDoctorCreateSlotMutation,
-  useGetSlotsByDateMutation
-} from "../../DoctorSlices/doctorApiSlice.js";
+import { useState } from "react";
+import { useDoctorCreateSlotMutation, useGetSlotsByDatesMutation  } from "../../DoctorSlices/doctorApiSlice.js";
 import { toast } from "react-toastify";
 import { validateSlotForm } from "../../Helpers.js";
 import { CircleLoader } from "react-spinners";
@@ -13,7 +10,7 @@ const Slot = ({ minDate, doctorId }) => {
   const [slots, setSlots] = useState([]);
   const [slotsDate, setSlotsDate] = useState("");
   const [doctorCreateSlot, { isLoading }] = useDoctorCreateSlotMutation();
-  const [getSlotsByDate,{isLoading:loadingSlots}] = useGetSlotsByDateMutation();
+  const [getSlotsByDate] = useGetSlotsByDatesMutation()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,19 +35,19 @@ const Slot = ({ minDate, doctorId }) => {
   };
 
   const getSlotsHandler = async (e) => {
-    if(!slotsDate){
-      return toast.error('Please select a date for view slots')
+    e.preventDefault();
+    if (!slotsDate) {
+      return toast.error("Please select a date for view slots");
     }
 
     try {
-
-      const response = await getSlotsByDate({slotsDate}).unwrap()
-      setSlots(response)
-      if(response.length < 1){
-         toast.success('No Slots for this date')
+      const response = await getSlotsByDate({ slotsDate }).unwrap();
+      setSlots(response);
+      if (response.length < 1) {
+        toast.success("No Slots for this date");
       }
     } catch (err) {
-      toast.error(err?.data?.message || err?.error)
+      toast.error(err?.data?.message || err?.error);
     }
   };
 
@@ -111,33 +108,32 @@ const Slot = ({ minDate, doctorId }) => {
           </form>
         </div>
         <div className=" ml-10">
-        <div className="flex">
-         {
-          slots?.length > 0 && (
-          
-            slots.map((slot, index)=>{
-           
-              return (<span className=" bg-primary-400 rounded-md m-2 p-4" key={index}>{`${slot.startTime} to ${slot.endTime}`}</span>)
-            })
-               
-            
-          )
-         }
-         </div>
-          
+          <div className="flex">
+            {slots?.length > 0 &&
+              slots.map((slot, index) => {
+                return (
+                  <span
+                    className=" bg-primary-400 rounded-md m-2 p-4"
+                    key={index}
+                  >{`${slot.startTime} to ${slot.endTime}`}</span>
+                );
+              })}
+          </div>
 
-          <input
-            type="date"
-            className="w-40 m-4 rounded-md bg-gray-100 focus:bg-white"
-            min={minDate}
-            onChange={(e) => setSlotsDate(e.target.value)}
-          />
-          <button
-            className="p-2 w-40 ml-4 border rounded-lg bg-primary-500 text-white"
-            onClick={getSlotsHandler}
-          >
-            View Slots
-          </button>
+          <form onSubmit={getSlotsHandler}>
+            <input
+              type="date"
+              className="w-40 m-4 rounded-md bg-gray-100 focus:bg-white"
+              min={minDate}
+              onChange={(e) => setSlotsDate(e.target.value)}
+            />
+            <button
+              className="p-2 w-40 ml-4 border rounded-lg bg-primary-500 text-white"
+              type="submit"
+            >
+              View Slots
+            </button>
+          </form>
         </div>
       </div>
     </div>

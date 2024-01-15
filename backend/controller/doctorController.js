@@ -79,6 +79,7 @@ const doctorLogin = asyncHandler(async (req, res) => {
       specialization: doctor.specialization.name,
       images: doctor.images,
       experience: doctor.experience,
+      consultaionFee:doctor.consultaionFee
     });
   } else {
     res.status(401);
@@ -182,6 +183,7 @@ const getDoctorProfile = asyncHandler(async (req, res) => {
     qualification: req.doctor.qualification,
     experience: req.doctor.experience,
     specialization: req.doctor.specialization,
+    consultaionFee:req.doctor.consultaionFee
   };
   return res.status(200).json(doctor);
 });
@@ -190,8 +192,6 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
   const doctor = await Doctor.findById(req.doctor._id)
     .select("-__v -isVerified -isBlocked -verificationCode -address")
     .populate("specialization");
-
-  console.log(req.body);
   if (!doctor) {
     res.status(404);
     throw new Error("User not found");
@@ -202,6 +202,7 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
   doctor.qualification = req.body.qualification || doctor.qualification;
   doctor.experience = req.body.experience || doctor.experience;
   doctor.specialization = req.body.specialization || doctor.specialization;
+  doctor.consultaionFee = req.body.consultaionFee || doctor.consultaionFee;
 
   if (req.body.password) {
     doctor.password = req.body.password;

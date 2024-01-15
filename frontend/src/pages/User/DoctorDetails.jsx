@@ -1,42 +1,52 @@
 import Testimonial from "../../components/Doctor/Testimonial";
 import { useParams } from "react-router-dom";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserGetOneDoctorMutation } from "../../UserSlices/usersApiSlice.js";
 import { toast } from "react-toastify";
-import {BarLoader} from 'react-spinners'
-
-
+import { BarLoader } from "react-spinners";
+import { setTommorrowDate } from "../../Helpers.js";
+import { useGetSlotsByDateQuery } from "../../UserSlices/usersApiSlice.js";
+import { CircleLoader } from "react-spinners";
 const DoctorDetails = () => {
-  const [doctor,setDoctor] = useState({})
-  const [getDoctor,{isLoading}] = useUserGetOneDoctorMutation()
-  const {id}=useParams()
-   
-  useEffect(()=>{
+  const { id } = useParams();
+  const [doctor, setDoctor] = useState({});
+  const [doctorId, setDoctorId] = useState(id || "");
+  const [minDate, setMinDate] = useState("");
+  const [date, setDate] = useState("2001-01-01");
+  const [getDoctor, { isLoading }] = useUserGetOneDoctorMutation();
+  const { data, error, refetch } = useGetSlotsByDateQuery({
+    date,
+    doctorId,
+    enabled: false, // Disable automatic execution
+  });
 
-    fetchData(id)
+  const handleClick = (e) => {
+    refetch({ data, doctorId });
+  };
 
-  },[])
-  const fetchData = async(id)=>{
-       
+  useEffect(() => {
+    fetchData(id);
+    const formattedDate = setTommorrowDate();
+    setMinDate(formattedDate);
+  }, []);
+  const fetchData = async (id) => {
     try {
-      const res = await getDoctor(id).unwrap()
+      const res = await getDoctor(id).unwrap();
       setDoctor(res);
-      
     } catch (err) {
       toast.error(err?.data?.message || err?.error);
     }
+  };
+
+  if (isLoading) {
+    return <BarLoader width={100} />;
   }
 
-if(isLoading){
-  return <BarLoader width={100} />
-}
- 
   return (
     <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800">
       <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6">
-      
-        <div className="flex flex-wrap -mx-4">
-          <div className=" px-4 md:w-1/2 h-72  " style={{width:"14rem"}}>
+        <div className="flex flex-wrap -mx-4 ">
+          <div className=" px-4 md:w-1/2 h-72  " style={{ width: "14rem" }}>
             <div className="sticky top-0 z-50 overflow-hidden w-52">
               <div className="relative mb-6 lg:mb-10 lg:h-2/4   ">
                 <img
@@ -54,10 +64,11 @@ if(isLoading){
                   Doctor
                 </span>
                 <h2 className="max-w-xl mt-2 mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
-                  {doctor.name} <span className="text-2xl">({doctor.qualification})</span>
+                  {doctor.name}{" "}
+                  <span className="text-2xl">({doctor.qualification})</span>
                 </h2>
                 <h2 className="max-w-xl mt-2 mb-6 text-2xl font-bold dark:text-gray-400 ">
-                 {doctor?.specialization?.name}
+                  {doctor?.specialization?.name}
                 </h2>
                 <div className="flex items-center mb-6">
                   <ul className="flex mr-2">
@@ -123,45 +134,66 @@ if(isLoading){
                   </p>
                 </div>
                 <p className="max-w-md mb-8 text-gray-700 dark:text-gray-400">
-                  {doctor?.specialization?.description} <br/>
+                  {doctor?.specialization?.description} <br />
                   Lorem ispum dor amet Lorem ispum dor amet Lorem ispum dor amet
                   Lorem ispum dor amet Lorem ispum dor amet
                 </p>
                 <p className="inline-block mb-8 text-4xl font-bold text-gray-700 dark:text-gray-400 ">
-                  <span>Rs 250 /-</span>
-                  <span className="text-base font-normal text-gray-500 line-through dark:text-gray-400">
-                   
+                  <span>
+                    {doctor.consultaionFee > 0
+                      ? `Rs: ${doctor.consultaionFee} /-`
+                      : "Not Available"}
                   </span>
+                  <span className="text-base font-normal text-gray-500 line-through dark:text-gray-400"></span>
                 </p>
-              </div>
-
-              <div className="flex flex-wrap items-center -mx-4 ">
-                <div className="w-full px-4 mb-4 lg:w-1/2 lg:mb-0">
-                  <input
-                    type="date"
-                    name="appointment_date"
-                    id="appointment_date"
-                    className="border border-gray-300 rounded-lg text-center py-3 px-5 focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                    required
-                  />
-                </div>
-                <div className="w-full px-4 mb-4 lg:mb-0 lg:w-1/2">
-                  <button className="flex items-center justify-center w-full p-4 text-blue-500 border border-blue-500 rounded-md dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 hover:text-gray-100
-                   dark:bg-blue-600 dark:hover:bg-blue-700 dark:hover:border-blue-700 dark:hover:text-gray-300">
-                    Book Appointment
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      {doctor?.consultaionFee > 0 && (
+        <div className="m-4 flex">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 ">
+            <div className="">
+              <input
+                type="date"
+                min={minDate}
+                name="appointment_date"
+                id="appointment_date"
+                className="border mr-7 border-gray-300 rounded-lg text-center p-2 focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                onChange={(e) => setDate(e.target.value)}
+                value={date}
+              />
+              <button
+                onClick={handleClick}
+                className="bg-primary-400 rounded-md  p-2"
+              >
+                {" "}
+                Availability
+              </button>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex gap-2">
+              {data && (
+              data.map((slot,index)=>
+              <span className="bg-black text-white p-2 rounded-md cursor-pointer hover:bg-gray-500 hover:text-black ">{slot.startTime >= 12
+                ? `${slot.startTime} PM`
+                : `${slot.startTime} AM`}</span>))}
+              </div>
+              <button
+                className="p-2 text-blue-500 border border-blue-500 rounded-md dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 hover:text-gray-100
+                   dark:bg-blue-600 dark:hover:bg-blue-700 dark:hover:border-blue-700 dark:hover:text-gray-300"
+              >
+                Book Appointment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex  gap-3 overflow-y-hidden overflow-x-scroll hide-scrollbar">
-        {
-          [1,2,3,4,5,5,6,7,7,8].map((v,index)=>{
-            return (<Testimonial key={index} />)
-          })
-        }
+        {[1, 2, 3, 4, 5, 5, 6, 7, 7, 8].map((v, index) => {
+          return <Testimonial key={index} />;
+        })}
       </div>
     </section>
   );
