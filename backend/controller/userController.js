@@ -7,7 +7,9 @@ import Doctor from "../model/doctorModel.js";
 import Specialization from "../model/specialization.js";
 import FavoriteDoctor from "../model/favoritesModel.js";
 import Slot from "../model/slotModel.js";
+import stripeInstance from "../utils/stripeInstance.js";
 
+const stripe = stripeInstance();
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -411,6 +413,21 @@ const getSlotByDate = asyncHandler(async (req, res) => {
   return res.json(slots);
 });
 
+const createPaymentIntent = asyncHandler(async (req, res) => {
+  const { amount, appointmentId } = req.body;
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount,
+    currency: 'inr', 
+    automatic_payment_methods:{
+     enabled:true
+    },
+    metadata: { appointmentId }, 
+  });
+console.log(paymentIntent);
+  res.json({ clientSecret: paymentIntent.client_secret });
+});
+
 export {
   login,
   registerUser,
@@ -429,4 +446,5 @@ export {
   favourites,
   getFavourites,
   getSlotByDate,
+  createPaymentIntent,
 };

@@ -16,7 +16,8 @@ import {
   googleAuth,
   favourites,
   getFavourites,
-  getSlotByDate
+  getSlotByDate,
+  createPaymentIntent
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -39,6 +40,7 @@ router
   router.post('/favourite',protect,favourites)
   router.get('/get-favourites',protect,getFavourites)
   router.get('/slots/:date/:doctorId',protect,getSlotByDate)
+  router.post('/create-payment-intent',protect,createPaymentIntent)
 
 
 
