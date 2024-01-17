@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-// Define Appointment schema
 const appointmentSchema = new mongoose.Schema({
-  patientName: {
-    type: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'User',
     required: true,
   },
   doctorId: {
@@ -15,16 +15,20 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  appointmentTime: {
-    type: Number,
+  appointmentTime:{
+    type:String,
+    require:true
+  },
+  slotId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Slot',
     required: true,
   },
   paymentStatus: {
       type: String,
-      enum: ['Pending', 'Completed', 'Cancelled'],
       default: 'Pending',
     },
-    amount: {
+    consultationFee: {
       type: Number,
       default: 0,
     },
@@ -34,8 +38,7 @@ const appointmentSchema = new mongoose.Schema({
     },
     paymentMethod: {
       type: String,
-      enum: ['Card', 'Online', 'Cash', 'Wallet'],
-      default: 'Cash',
+      required:true
     },
 
 
@@ -44,4 +47,4 @@ const appointmentSchema = new mongoose.Schema({
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);
 
-module.exports = Appointment;
+export default Appointment;

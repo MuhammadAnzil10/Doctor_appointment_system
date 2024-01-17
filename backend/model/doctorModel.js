@@ -69,7 +69,7 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  consultaionFee :{
+  consultationFee :{
     type:Number,
     default:0
   },

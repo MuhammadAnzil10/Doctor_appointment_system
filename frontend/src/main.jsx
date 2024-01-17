@@ -45,6 +45,10 @@ import DoctorResetPassword from "./pages/Doctor/DoctorResetPassword.jsx";
 import DoctorProfile from "./pages/Doctor/DoctorProfile.jsx";
 import Favourites from "./pages/User/Favourites.jsx";
 import AdminProfile from "./pages/Admin/AdminProfile.jsx";
+import PaymentPage from "./pages/User/PaymentPage.jsx";
+import PaymentSuccessPage from "./pages/User/PaymentSuccessPage.jsx";
+import NotFound from "./pages/Not Found/NotFound.jsx";
+import Bookings from "./pages/User/Bookings.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -64,6 +68,9 @@ const router = createBrowserRouter(
           <Route path="/doctors" element={<UserDoctorsLists />} />
           <Route path="/doctor-details/:id" element={<DoctorDetails />} />
           <Route path="/favourites" element={<Favourites />} />
+          <Route path="/payment/:slotId/:doctorId" element={<PaymentPage />} />
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/bookings" element={<Bookings />} />
         </Route>
       </Route>
 
@@ -95,8 +102,9 @@ const router = createBrowserRouter(
       <Route path="" element={<DoctorLayout />}>
         <Route index={true} path="/doctor" element={<DoctorHome />} />
         <Route path="/doctor/doctor-profile" element={<DoctorProfile />} />
-        
       </Route>
+      <Route path="*" element={<NotFound />} />
+
     </>
   )
 );

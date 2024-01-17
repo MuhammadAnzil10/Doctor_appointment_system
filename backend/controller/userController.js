@@ -8,6 +8,7 @@ import Specialization from "../model/specialization.js";
 import FavoriteDoctor from "../model/favoritesModel.js";
 import Slot from "../model/slotModel.js";
 import stripeInstance from "../utils/stripeInstance.js";
+import Appointment from "../model/appointmentModel.js";
 
 const stripe = stripeInstance();
 const login = asyncHandler(async (req, res) => {
@@ -408,24 +409,100 @@ const getSlotByDate = asyncHandler(async (req, res) => {
   const slots = await Slot.find({
     date: new Date(date),
     doctor: doctorId,
+    isBooked: false,
   }).select("-__v");
 
   return res.json(slots);
 });
 
 const createPaymentIntent = asyncHandler(async (req, res) => {
-  const { amount, appointmentId } = req.body;
-
+  const { slotId, doctorId } = req.body;
+  const doctor = await Doctor.findById(doctorId);
+  const consultationFee = doctor.consultationFee;
   const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency: 'inr', 
-    automatic_payment_methods:{
-     enabled:true
+    amount: consultationFee * 100,
+    currency: "inr",
+    automatic_payment_methods: {
+      enabled: true,
     },
-    metadata: { appointmentId }, 
+    metadata: { slotId, doctorId },
   });
-console.log(paymentIntent);
-  res.json({ clientSecret: paymentIntent.client_secret });
+
+  res.status(200).json({ clientSecret: paymentIntent.client_secret });
+});
+
+const confirmPayment = asyncHandler(async (req, res) => {
+  const { paymentIntentId } = req.body;
+
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  const metadata = paymentIntent.metadata;
+
+  const { doctorId, slotId } = metadata;
+  const doctor = await Doctor.findById(doctorId);
+  const slot = await Slot.findById(slotId);
+  if (slot.isBooked) {
+    res.status(400);
+    throw new Error("This slot is already booked.");
+  }
+  const appointment = await Appointment.create({
+    userId: req.user._id,
+    doctorId,
+    slotId,
+    appointmentDate: slot.date,
+    appointmentTime: slot.startTime,
+    paymentStatus: "Completed",
+    consultationFee: doctor.consultationFee,
+    paymentMethod: "Online",
+  });
+  const updatedSlot = await Slot.findByIdAndUpdate(slotId, {
+    $set: { isBooked: true },
+  });
+  res.status(200).json(appointment);
+});
+
+const makePayment = asyncHandler(async (req, res) => {
+  const { doctorId, slotId, paymentMethod } = req.body;
+  const doctor = await Doctor.findById(doctorId);
+  const slot = await Slot.findById(slotId);
+
+  if (slot.isBooked) {
+    res.status(400);
+    throw new Error("Sorry! This slot has been booked");
+  }
+
+  const appointment = await Appointment.create({
+    userId: req.user._id,
+    doctorId,
+    slotId,
+    appointmentDate: slot.date,
+    appointmentTime: slot.startTime,
+    paymentStatus: "Completed",
+    consultationFee: doctor.consultationFee,
+    paymentMethod: paymentMethod,
+  });
+  const updatedSlot = await Slot.findByIdAndUpdate(slotId, {
+    $set: { isBooked: true },
+  });
+
+  res.status(200).json(appointment);
+});
+
+const getUserBookings = asyncHandler(async (req, res) => {
+  const bookings = await Appointment.find({ userId: req.user._id })
+    .populate("slotId")
+    .populate({
+      path: "doctorId",
+      populate: { path: "specialization" },
+    });
+
+  const userBookings = bookings.map((booking, index) => {
+
+    booking.doctorId.password = "";
+    booking.doctorId.verificationCode = "";
+
+    return booking;
+  });
+  res.status(200).json(userBookings);
 });
 
 export {
@@ -447,4 +524,7 @@ export {
   getFavourites,
   getSlotByDate,
   createPaymentIntent,
+  confirmPayment,
+  makePayment,
+  getUserBookings,
 };

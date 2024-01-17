@@ -109,7 +109,35 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url:`${USERS_URL}/slots/${date}/${doctorId}`,
         method:"GET",
       })
+    }),
+    createPaymentIntent:builder.mutation({
+      query:(data)=>({
+        url:`${USERS_URL}/create-payment-intent`,
+        method:'POST',
+        body:data
+      })
+    }),
+    confirmPayment:builder.mutation({
+      query:(data)=>({
+        url:`${USERS_URL}/confirm-payment`,
+        method:"POST",
+        body:data
+      })
+    }),
+    makePayment:builder.mutation({
+      query:(data)=>({
+          url:`${USERS_URL}/make-payment`,
+          method:"POST",
+          body:data
+      })
+    }),
+    getUserBookings:builder.query({
+      query:()=>({
+        url:`${USERS_URL}/bookings`,
+        method:"GET"
+      })
     })
+
 
   }),
 });
@@ -130,5 +158,9 @@ export const {
   useUserGoogleAuthMutation,
   useFavouriteMutation,
   useGetFavouriteQuery,
-  useGetSlotsByDateQuery
+  useGetSlotsByDateQuery,
+  useCreatePaymentIntentMutation,
+  useConfirmPaymentMutation,
+  useMakePaymentMutation,
+  useGetUserBookingsQuery
 } = usersApiSlice;

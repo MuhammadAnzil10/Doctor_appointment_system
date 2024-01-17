@@ -17,7 +17,10 @@ import {
   favourites,
   getFavourites,
   getSlotByDate,
-  createPaymentIntent
+  createPaymentIntent,
+  confirmPayment,
+  makePayment,
+  getUserBookings
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -41,6 +44,10 @@ router
   router.get('/get-favourites',protect,getFavourites)
   router.get('/slots/:date/:doctorId',protect,getSlotByDate)
   router.post('/create-payment-intent',protect,createPaymentIntent)
+  router.post('/confirm-payment',protect,confirmPayment)
+  // make payment throug cash or wallet
+  router.post('/make-payment',protect,makePayment)
+  router.get('/bookings',protect,getUserBookings)
 
 
 
