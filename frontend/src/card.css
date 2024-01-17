@@ -31,15 +31,18 @@ button {
   height: 3rem;
   margin: 0px;
 }
+
+
+
 .spanBtn{
   height: 3rem;
   width: 5rem;
-  padding: 2px;
+  padding: 10px;
 }
 .noSlotSpan{
   width: 5rem;
   height: 4rem;
-  padding: 7px;
+  padding: 10px;
 }
 button {
   background: var(--accent-color);

@@ -24,7 +24,7 @@ const UserHeader = () => {
           <img src={logo} alt="" className=" w-24 h-16  object-cover" />
         </div>
         <div className="flex items-center pr-4">
-          <ul className="flex space-x-2 dark:text-white  justify-center cursor-pointer">
+          <ul className="flex space-x-2 dark:text-white  justify-center cursor-pointer  gap-2">
           <NavLink to="/">
               <li>Home</li>
             </NavLink>

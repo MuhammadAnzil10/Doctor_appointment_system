@@ -49,6 +49,7 @@ import PaymentPage from "./pages/User/PaymentPage.jsx";
 import PaymentSuccessPage from "./pages/User/PaymentSuccessPage.jsx";
 import NotFound from "./pages/Not Found/NotFound.jsx";
 import Bookings from "./pages/User/Bookings.jsx";
+import AppointmentsList from "./pages/Doctor/AppointmentsList.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -102,6 +103,7 @@ const router = createBrowserRouter(
       <Route path="" element={<DoctorLayout />}>
         <Route index={true} path="/doctor" element={<DoctorHome />} />
         <Route path="/doctor/doctor-profile" element={<DoctorProfile />} />
+        <Route path="/doctor/appointments" element={<AppointmentsList />} />
       </Route>
       <Route path="*" element={<NotFound />} />
 

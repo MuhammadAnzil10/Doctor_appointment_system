@@ -67,6 +67,12 @@ const doctorApiSlice = apiSlice.injectEndpoints({
         body:date
       })
     }),
+    getAppointments:builder.query({
+      query:()=>({
+       url:`${DOCTOR_URL}/appointments`,
+       method:"GET"
+      })
+    })
   }),
 });
 
@@ -79,5 +85,6 @@ export const {
   useDoctorResetPasswordMutation,
   useUpdateDoctorProfileMutation,
   useDoctorCreateSlotMutation,
-  useGetSlotsByDatesMutation
+  useGetSlotsByDatesMutation,
+  useGetAppointmentsQuery
 } = doctorApiSlice;

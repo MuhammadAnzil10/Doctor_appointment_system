@@ -11,7 +11,8 @@ import {
   getDoctorProfile,
   editDoctorProfile,
   createSlot,
-  getSlotsBydate
+  getSlotsBydate,
+  getDoctorAppointmets
 } from "../controller/doctorController.js";
 import { doctorProtect } from "../middleware/doctorAuthMiddleware.js";
 
@@ -24,6 +25,6 @@ router.post("/logout", doctorLogout);
 router.post('/create-slot',doctorProtect,createSlot)
 router.post('/slots',doctorProtect,getSlotsBydate)
 router.route('/doctor-profile').get(doctorProtect,getDoctorProfile).put(doctorProtect,editDoctorProfile)
-
+router.get('/appointments',doctorProtect,getDoctorAppointmets)
 
 export default router;

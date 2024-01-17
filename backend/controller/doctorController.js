@@ -4,7 +4,8 @@ import generateOtp from "../utils/generateOtp.js";
 import Doctor from "../model/doctorModel.js";
 import generateDoctorToken from "../utils/doctorToken.js";
 import Slot from "../model/slotModel.js";
-
+import Appointment from "../model/appointmentModel.js";
+import {formatTime} from '../helpers/doctorHelper.js'
 const doctorRegister = asyncHandler(async (req, res) => {
   const {
     name,
@@ -79,7 +80,7 @@ const doctorLogin = asyncHandler(async (req, res) => {
       specialization: doctor.specialization.name,
       images: doctor.images,
       experience: doctor.experience,
-      consultaionFee:doctor.consultaionFee
+      consultaionFee: doctor.consultaionFee,
     });
   } else {
     res.status(401);
@@ -183,7 +184,7 @@ const getDoctorProfile = asyncHandler(async (req, res) => {
     qualification: req.doctor.qualification,
     experience: req.doctor.experience,
     specialization: req.doctor.specialization,
-    consultaionFee:req.doctor.consultaionFee
+    consultaionFee: req.doctor.consultaionFee,
   };
   return res.status(200).json(doctor);
 });
@@ -219,11 +220,11 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
 
 const createSlot = asyncHandler(async (req, res) => {
   const { date, startTime, endTime, doctorId } = req.body;
-
+  const { updatedStartTime ,  updatedEndTime} = formatTime(startTime,endTime)
   const existingSlot = await Slot.findOne({
     date: new Date(date),
-    startTime,
-    endTime,
+    startTime:updatedStartTime,
+    endTime:updatedEndTime,
   });
 
   if (existingSlot) {
@@ -234,22 +235,36 @@ const createSlot = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please select correct time range");
   }
-
+ 
   const newSlot = await Slot.create({
     doctor: doctorId,
     date: new Date(date),
-    startTime,
-    endTime,
+    startTime:updatedStartTime,
+    endTime:updatedEndTime,
   });
   return res.json(newSlot);
 });
 
 const getSlotsBydate = asyncHandler(async (req, res) => {
-  
   const { slotsDate } = req.body;
   const slots = await Slot.find({ date: new Date(slotsDate) });
 
   res.status(200).json(slots);
+});
+
+const getDoctorAppointmets = asyncHandler(async (req, res) => {
+  const doctorId = req.doctor._id;
+
+  const appointments = await Appointment.find({ doctorId })
+    .populate("userId")
+
+  const doctorAppointments = appointments.map((appointment) => {
+    appointment.userId.password = "";
+    appointment.userId.verificationCode = "";
+
+    return appointment;
+  });
+  res.json(doctorAppointments);
 });
 
 export {
@@ -263,4 +278,5 @@ export {
   editDoctorProfile,
   createSlot,
   getSlotsBydate,
+  getDoctorAppointmets,
 };

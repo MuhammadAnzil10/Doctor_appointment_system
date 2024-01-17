@@ -28,6 +28,10 @@ const appointmentSchema = new mongoose.Schema({
       type: String,
       default: 'Pending',
     },
+    appointmentStatus:{
+      type:String,
+      default:'Pending'
+    },
     consultationFee: {
       type: Number,
       default: 0,
@@ -40,6 +44,7 @@ const appointmentSchema = new mongoose.Schema({
       type: String,
       required:true
     },
+    
 
 
 });
