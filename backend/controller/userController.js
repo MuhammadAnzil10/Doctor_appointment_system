@@ -506,13 +506,13 @@ const makePayment = asyncHandler(async (req, res) => {
   });
   if (paymentMethod === "Wallet") {
     wallet.balance -= consultationFee;
-    wallet.transactions.unshift({type:'debit',amount:consultationFee});
+    wallet.transactions.unshift({ type: "debit", amount: consultationFee });
     await wallet.save();
 
-    return res.status(200).json({wallet,appointment})
+    return res.status(200).json({ wallet, appointment });
   }
- 
- return res.status(200).json(appointment);
+
+  return res.status(200).json(appointment);
 });
 
 const getUserBookings = asyncHandler(async (req, res) => {
@@ -534,7 +534,7 @@ const getUserBookings = asyncHandler(async (req, res) => {
 
 const userWallet = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const {amount} = req.body
+  const { amount } = req.body;
   let wallet = await Wallet.findOne({ userId });
   console.log(wallet);
   const transaction = {
@@ -542,7 +542,7 @@ const userWallet = asyncHandler(async (req, res) => {
     type: "credit",
   };
   if (!wallet) {
-    wallet =await Wallet.create({
+    wallet = await Wallet.create({
       userId,
       balance: Number(amount),
       transactions: [transaction],
@@ -550,18 +550,17 @@ const userWallet = asyncHandler(async (req, res) => {
   } else {
     wallet.balance += Number(amount);
     wallet.transactions.push(transaction);
-    await wallet.save()
+    await wallet.save();
   }
   res.status(200).json(wallet);
 });
 
-const getUserWallet = asyncHandler(async(req,res)=>{
+const getUserWallet = asyncHandler(async (req, res) => {
+  const userId = req.user;
+  const userWallet = await Wallet.findOne({ userId }).select("-__v");
 
-      const userId = req.user;
-      const userWallet=await Wallet.findOne({userId}).select('-__v')
-
-      res.json(userWallet);
-})
+  res.status(200).json(userWallet);
+});
 
 export {
   login,
