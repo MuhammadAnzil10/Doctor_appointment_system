@@ -20,7 +20,8 @@ import {
   createPaymentIntent,
   confirmPayment,
   makePayment,
-  getUserBookings
+  getUserBookings,
+  userWallet
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -48,7 +49,7 @@ router
   // make payment throug cash or wallet
   router.post('/make-payment',protect,makePayment)
   router.get('/bookings',protect,getUserBookings)
-
+  router.post('/wallet',protect,userWallet)
 
 
 export default router;

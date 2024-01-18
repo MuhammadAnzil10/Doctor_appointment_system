@@ -7,10 +7,13 @@ import Doctor from "../model/doctorModel.js";
 import Specialization from "../model/specialization.js";
 import FavoriteDoctor from "../model/favoritesModel.js";
 import Slot from "../model/slotModel.js";
-import stripeInstance from "../utils/stripeInstance.js";
 import Appointment from "../model/appointmentModel.js";
+import {
+  createIntentStripe,
+  retrievePaymentMetadata,
+} from "../helpers/userHelper.js";
+import Wallet from "../model/walletModel.js";
 
-const stripe = stripeInstance();
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -417,16 +420,29 @@ const getSlotByDate = asyncHandler(async (req, res) => {
 
 const createPaymentIntent = asyncHandler(async (req, res) => {
   const { slotId, doctorId } = req.body;
+
   const doctor = await Doctor.findById(doctorId);
   const consultationFee = doctor.consultationFee;
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: consultationFee * 100,
-    currency: "inr",
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    metadata: { slotId, doctorId },
+
+  // const paymentIntent = await stripe.paymentIntents.create({
+  //   amount: consultationFee * 100,
+  //   currency: "inr",
+  //   automatic_payment_methods: {
+  //     enabled: true,
+  //   },
+  //   metadata: { slotId, doctorId },
+  // });
+
+  const { success, paymentIntent, message } = await createIntentStripe({
+    amount: consultationFee,
+    slotId,
+    doctorId,
   });
+
+  if (!success) {
+    res.status(400);
+    throw new Error("Error creating Payment Intent");
+  }
 
   res.status(200).json({ clientSecret: paymentIntent.client_secret });
 });
@@ -434,9 +450,16 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
 const confirmPayment = asyncHandler(async (req, res) => {
   const { paymentIntentId } = req.body;
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-  const metadata = paymentIntent.metadata;
+  // const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  const { success, paymentIntent } = await retrievePaymentMetadata(
+    paymentIntentId
+  );
 
+  if (!success) {
+    res.status(400);
+    throw new Error("Failed to retrieve payment data Please retry");
+  }
+  const metadata = paymentIntent.metadata;
   const { doctorId, slotId } = metadata;
   const doctor = await Doctor.findById(doctorId);
   const slot = await Slot.findById(slotId);
@@ -462,8 +485,17 @@ const confirmPayment = asyncHandler(async (req, res) => {
 
 const makePayment = asyncHandler(async (req, res) => {
   const { doctorId, slotId, paymentMethod } = req.body;
+  const userId = req.user._id;
   const doctor = await Doctor.findById(doctorId);
+  const wallet = await Wallet.findOne({ userId });
   const slot = await Slot.findById(slotId);
+  const consultationFee = doctor.consultationFee;
+  if (paymentMethod === "Wallet") {
+    if (!wallet || wallet?.balance < consultationFee) {
+      res.status(400);
+      throw new Error("Please Check Your wallet balance");
+    }
+  }
 
   if (slot.isBooked) {
     res.status(400);
@@ -477,13 +509,17 @@ const makePayment = asyncHandler(async (req, res) => {
     appointmentDate: slot.date,
     appointmentTime: slot.startTime,
     paymentStatus: "Completed",
-    consultationFee: doctor.consultationFee,
-    paymentMethod: paymentMethod,
+    consultationFee,
+    paymentMethod,
   });
   const updatedSlot = await Slot.findByIdAndUpdate(slotId, {
     $set: { isBooked: true },
   });
-
+  if (paymentMethod === "Wallet") {
+    wallet.balance -= consultationFee;
+    wallet.transactions.unshift({type:'debit',amount:consultationFee});
+  }
+  await wallet.save();
   res.status(200).json(appointment);
 });
 
@@ -496,13 +532,35 @@ const getUserBookings = asyncHandler(async (req, res) => {
     });
 
   const userBookings = bookings.map((booking, index) => {
-
     booking.doctorId.password = "";
     booking.doctorId.verificationCode = "";
 
     return booking;
   });
   res.status(200).json(userBookings);
+});
+
+const userWallet = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const {amount} = req.body
+  let wallet = await Wallet.findOne({ userId });
+  console.log(wallet);
+  const transaction = {
+    amount: Number(amount),
+    type: "credit",
+  };
+  if (!wallet) {
+    wallet =await Wallet.create({
+      userId,
+      balance: Number(amount),
+      transactions: [transaction],
+    });
+  } else {
+    wallet.balance += Number(amount);
+    wallet.transactions.push(transaction);
+    await wallet.save()
+  }
+  res.status(200).json(wallet);
 });
 
 export {
@@ -527,4 +585,5 @@ export {
   confirmPayment,
   makePayment,
   getUserBookings,
+  userWallet,
 };

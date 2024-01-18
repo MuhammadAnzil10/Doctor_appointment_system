@@ -37,7 +37,6 @@ const userSchema =new mongoose.Schema(
     },
     verificationCode: String,
   },
-  
   {
     timestamps: true,
   }
