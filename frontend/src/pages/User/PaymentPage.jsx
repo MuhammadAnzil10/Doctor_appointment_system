@@ -22,7 +22,7 @@ const PaymentPage = () => {
   const navigate = useNavigate()
   
   useEffect(() => {
-   console.log(slot,doctor);
+   
    if(!doctorId || !slotId){
     return navigate('/doctors')
    }

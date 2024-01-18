@@ -423,17 +423,7 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
 
   const doctor = await Doctor.findById(doctorId);
   const consultationFee = doctor.consultationFee;
-
-  // const paymentIntent = await stripe.paymentIntents.create({
-  //   amount: consultationFee * 100,
-  //   currency: "inr",
-  //   automatic_payment_methods: {
-  //     enabled: true,
-  //   },
-  //   metadata: { slotId, doctorId },
-  // });
-
-  const { success, paymentIntent, message } = await createIntentStripe({
+  const { success, paymentIntent } = await createIntentStripe({
     amount: consultationFee,
     slotId,
     doctorId,
@@ -450,7 +440,6 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
 const confirmPayment = asyncHandler(async (req, res) => {
   const { paymentIntentId } = req.body;
 
-  // const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
   const { success, paymentIntent } = await retrievePaymentMetadata(
     paymentIntentId
   );
@@ -518,9 +507,12 @@ const makePayment = asyncHandler(async (req, res) => {
   if (paymentMethod === "Wallet") {
     wallet.balance -= consultationFee;
     wallet.transactions.unshift({type:'debit',amount:consultationFee});
+    await wallet.save();
+
+    return res.status(200).json({wallet,appointment})
   }
-  await wallet.save();
-  res.status(200).json(appointment);
+ 
+ return res.status(200).json(appointment);
 });
 
 const getUserBookings = asyncHandler(async (req, res) => {
@@ -563,6 +555,14 @@ const userWallet = asyncHandler(async (req, res) => {
   res.status(200).json(wallet);
 });
 
+const getUserWallet = asyncHandler(async(req,res)=>{
+
+      const userId = req.user;
+      const userWallet=await Wallet.findOne({userId}).select('-__v')
+
+      res.json(userWallet);
+})
+
 export {
   login,
   registerUser,
@@ -586,4 +586,5 @@ export {
   makePayment,
   getUserBookings,
   userWallet,
+  getUserWallet,
 };

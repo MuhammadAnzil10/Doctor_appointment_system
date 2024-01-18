@@ -21,7 +21,8 @@ import {
   confirmPayment,
   makePayment,
   getUserBookings,
-  userWallet
+  userWallet,
+  getUserWallet
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
@@ -50,6 +51,7 @@ router
   router.post('/make-payment',protect,makePayment)
   router.get('/bookings',protect,getUserBookings)
   router.post('/wallet',protect,userWallet)
+  router.get('/get-wallet',protect,getUserWallet)
 
 
 export default router;
