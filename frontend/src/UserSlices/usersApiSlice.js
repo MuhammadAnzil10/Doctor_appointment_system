@@ -136,6 +136,17 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         url:`${USERS_URL}/bookings`,
         method:"GET"
       })
+    }),
+    rechargeWallet:builder.mutation({
+      query:(data)=>({
+        url:`${USERS_URL}/wallet`,
+        method:'POST',
+        body:data
+      })
+    }),
+    getWallet:builder.query({
+      query:`${USERS_URL}/get-wallet`,
+      method:'GET'
     })
 
 
@@ -162,5 +173,7 @@ export const {
   useCreatePaymentIntentMutation,
   useConfirmPaymentMutation,
   useMakePaymentMutation,
-  useGetUserBookingsQuery
+  useGetUserBookingsQuery,
+  useGetWalletQuery,
+  useRechargeWalletMutation
 } = usersApiSlice;
