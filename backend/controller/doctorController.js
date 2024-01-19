@@ -221,6 +221,7 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
 const createSlot = asyncHandler(async (req, res) => {
   const { date, startTime, endTime, doctorId } = req.body;
   const { updatedStartTime ,  updatedEndTime} = formatTime(startTime,endTime)
+  
   const existingSlot = await Slot.findOne({
     date: new Date(date),
     startTime:updatedStartTime,

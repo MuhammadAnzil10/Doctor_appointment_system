@@ -145,8 +145,10 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       })
     }),
     getWallet:builder.query({
-      query:`${USERS_URL}/get-wallet`,
-      method:'GET'
+      query:()=>({
+        url:`${USERS_URL}/get-wallet`,
+        method:'GET'
+      })
     })
 
 

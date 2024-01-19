@@ -1,4 +1,3 @@
-import Carousel from "../../components/Carousel";
 import homeImage from "../../assets/images/userHomePage.png";
 import { Link } from "react-router-dom";
 

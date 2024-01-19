@@ -479,11 +479,16 @@ const makePayment = asyncHandler(async (req, res) => {
   const wallet = await Wallet.findOne({ userId });
   const slot = await Slot.findById(slotId);
   const consultationFee = doctor.consultationFee;
+ 
   if (paymentMethod === "Wallet") {
     if (!wallet || wallet?.balance < consultationFee) {
       res.status(400);
       throw new Error("Please Check Your wallet balance");
     }
+  }
+  if (!slot) {
+    res.status(400);
+    throw new Error("No Slot Availbale");
   }
 
   if (slot.isBooked) {
@@ -501,12 +506,17 @@ const makePayment = asyncHandler(async (req, res) => {
     consultationFee,
     paymentMethod,
   });
+
   const updatedSlot = await Slot.findByIdAndUpdate(slotId, {
     $set: { isBooked: true },
   });
   if (paymentMethod === "Wallet") {
     wallet.balance -= consultationFee;
-    wallet.transactions.unshift({ type: "debit", amount: consultationFee });
+    wallet.transactions.unshift({
+      type: "debit",
+      amount: consultationFee,
+      transactionBalance: wallet.balance - consultationFee,
+    });
     await wallet.save();
 
     return res.status(200).json({ wallet, appointment });
@@ -536,10 +546,13 @@ const userWallet = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { amount } = req.body;
   let wallet = await Wallet.findOne({ userId });
-  console.log(wallet);
+
   const transaction = {
     amount: Number(amount),
     type: "credit",
+    transactionBalance: wallet
+      ? wallet.balance + Number(amount)
+      : Number(amount),
   };
   if (!wallet) {
     wallet = await Wallet.create({
@@ -556,10 +569,11 @@ const userWallet = asyncHandler(async (req, res) => {
 });
 
 const getUserWallet = asyncHandler(async (req, res) => {
-  const userId = req.user;
-  const userWallet = await Wallet.findOne({ userId }).select("-__v");
 
+  const userId = req.user._id;
+  const userWallet = await Wallet.findOne({ userId }).select("-__v");
   res.status(200).json(userWallet);
+  
 });
 
 export {
