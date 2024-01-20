@@ -479,7 +479,7 @@ const makePayment = asyncHandler(async (req, res) => {
   const wallet = await Wallet.findOne({ userId });
   const slot = await Slot.findById(slotId);
   const consultationFee = doctor.consultationFee;
- 
+
   if (paymentMethod === "Wallet") {
     if (!wallet || wallet?.balance < consultationFee) {
       res.status(400);
@@ -515,7 +515,7 @@ const makePayment = asyncHandler(async (req, res) => {
     wallet.transactions.unshift({
       type: "debit",
       amount: consultationFee,
-      transactionBalance: wallet.balance - consultationFee,
+      transactionBalance: wallet.balance ,
     });
     await wallet.save();
 
@@ -542,9 +542,39 @@ const getUserBookings = asyncHandler(async (req, res) => {
   res.status(200).json(userBookings);
 });
 
-const userWallet = asyncHandler(async (req, res) => {
+const getUserWallet = asyncHandler(async (req, res) => {
   const userId = req.user._id;
+  const userWallet = await Wallet.findOne({ userId }).select("-__v");
+  res.status(200).json(userWallet);
+});
+const createWalletIntent = asyncHandler(async (req, res) => {
   const { amount } = req.body;
+
+  const { success, paymentIntent } = await createIntentStripe({
+    amount,
+  });
+
+  if (!success) {
+    res.status(400);
+    throw new Error("Error creating Payment Intent");
+  }
+
+  res.status(200).json({ clientSecret: paymentIntent.client_secret });
+});
+
+const confirmWalletPayment = asyncHandler(async (req, res) => {
+  const { paymentIntentId } = req.body;
+  const userId = req.user._id;
+  const { success, paymentIntent } = await retrievePaymentMetadata(
+    paymentIntentId
+  );
+
+  if (!success) {
+    res.status(400);
+    throw new Error("Failed to retrieve payment data Please retry");
+  }
+  const amount = paymentIntent.amount / 100;
+
   let wallet = await Wallet.findOne({ userId });
 
   const transaction = {
@@ -562,18 +592,10 @@ const userWallet = asyncHandler(async (req, res) => {
     });
   } else {
     wallet.balance += Number(amount);
-    wallet.transactions.push(transaction);
+    wallet.transactions.unshift(transaction);
     await wallet.save();
   }
   res.status(200).json(wallet);
-});
-
-const getUserWallet = asyncHandler(async (req, res) => {
-
-  const userId = req.user._id;
-  const userWallet = await Wallet.findOne({ userId }).select("-__v");
-  res.status(200).json(userWallet);
-  
 });
 
 export {
@@ -598,6 +620,7 @@ export {
   confirmPayment,
   makePayment,
   getUserBookings,
-  userWallet,
   getUserWallet,
+  createWalletIntent,
+  confirmWalletPayment,
 };

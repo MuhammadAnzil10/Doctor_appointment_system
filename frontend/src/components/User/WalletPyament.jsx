@@ -3,14 +3,16 @@ import { useStripe, useElements } from "@stripe/react-stripe-js";
 import { PaymentElement } from "@stripe/react-stripe-js";
 import { useNavigate } from "react-router-dom";
 import "../../card.css";
-import { useConfirmPaymentMutation } from "../../UserSlices/usersApiSlice.js";
-const OnlinePayment = () => {
+import { useConfirmWalletPaymentMutation } from "../../UserSlices/usersApiSlice.js";
+import { toast } from "react-toastify";
+
+const WalletPayment = ({updateWallet }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const navigate = useNavigate()
-  const [confirmPayment] = useConfirmPaymentMutation();
+  const navigate = useNavigate();
+  const [confirmWalletPayment] = useConfirmWalletPaymentMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const OnlinePayment = () => {
     const { paymentIntent, error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/completion`,
+        return_url: `${window.location.origin}`,
       },
       redirect: "if_required",
     });
@@ -30,14 +32,14 @@ const OnlinePayment = () => {
     if (error) {
       setMessage("An unexpected error occured.");
     }
+
     if (paymentIntent) {
       try {
-        const response = await confirmPayment({
+        const response = await confirmWalletPayment({
           paymentIntentId: paymentIntent.id,
         }).unwrap();
-        navigate('/payment-success')
+        updateWallet(false,response)
       } catch (error) {
-        
         setIsProcessing(false);
       }
     }
@@ -59,4 +61,4 @@ const OnlinePayment = () => {
   );
 };
 
-export default OnlinePayment;
+export default WalletPayment;
