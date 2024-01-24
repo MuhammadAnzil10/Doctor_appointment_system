@@ -51,10 +51,10 @@ const UsersLists = () => {
   useEffect(() => {
     fetchAllUsers();
   }, [blockStatus]);
-
+ 
   return (
     <section>
-      <h1 className="font-bold p-3 px-28">Users List</h1>
+      <h1 className="font-bold p-3 px-28 text-center bg-red-400">Users List</h1>
       <Tables
         users={users}
         blockHandler={blockHandler}

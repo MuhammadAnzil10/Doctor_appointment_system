@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { useGetUserBookingsQuery } from "../../UserSlices/usersApiSlice";
-
-const Bookings = () => {
-  const { data, isLoading, error, refetch } = useGetUserBookingsQuery();
-  const [bookings, setBookings] = useState(data || []);
+import { useAdminGetAppointemntsQuery } from "../../AdminSlices/adminApiSlice.js";
+import { getStatusColor } from "../../Helpers.js";
+const AppointmentsList = () => {
+  const { data, isLoading, error, refetch } = useAdminGetAppointemntsQuery();
+  const [appointments, setAppointments] = useState(data || []);
 
   useEffect(() => {
     refetch();
-    if (data) setBookings(data);
+    if (data) setAppointments(data);
   }, [data]);
-  console.log(bookings);
+  console.log(appointments);
 
   return (
     <div className="relative overflow-x-auto py-4 px-2 mb-10 min-h-screen">
@@ -20,13 +20,19 @@ const Bookings = () => {
               Sl.No
             </th>
             <th scope="col" className="px-6 py-3">
+              Patient
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Phone
+            </th>
+            <th scope="col" className="px-6 py-3">
               Doctor
             </th>
             <th scope="col" className="px-6 py-3">
               Specialization
             </th>
             <th scope="col" className="px-6 py-3">
-              B-Date
+              Date
             </th>
             <th scope="col" className="px-6 py-3">
               Time
@@ -37,9 +43,8 @@ const Bookings = () => {
           </tr>
         </thead>
         <tbody>
-          {bookings && bookings.length > 0 ? (
-            bookings?.map((booking, index) => {
-              console.log(booking.appointmentStatus);
+          {appointments && appointments.length > 0 ? (
+            appointments?.map((appointment, index) => {
               return (
                 <tr
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
@@ -51,22 +56,24 @@ const Bookings = () => {
                   >
                     {index + 1}
                   </th>
-                  <td className="px-6 py-4">{booking.doctorId.name}</td>
+                  <td className="px-6 py-4">{appointment.userId.name}</td>
+                  <td className="px-6 py-4">{appointment.userId.phone}</td>
+                  <td className="px-6 py-4">{appointment?.doctorId?.name}</td>
                   <td className="px-6 py-4">
-                    {booking.doctorId.specialization.name}
+                    {appointment?.doctorId?.specialization?.name}
                   </td>
                   <td className="px-6 py-4">
-                    {booking.appointmentDate.split("T")[0]}
+                    {appointment?.appointmentDate?.split("T")[0]}
                   </td>
-                  <td className="px-6 py-4">{booking.appointmentTime}</td>
+                  <td className="px-6 py-4">{appointment?.appointmentTime}</td>
                   <td className="px-6 py-4">
-                    {booking?.appointmentStatus === "Cancelled" ? (
-                      <button className="bg-red-400">Cancelled</button>
-                    ) : booking?.appointmentStatus === "Consulted" ? (
-                      <button className="bg-green-400">Consulted</button>
-                    ) : (
-                      <button className="bg-yellow-400">Pending</button>
-                    )}
+                    <button
+                      className={`${getStatusColor(
+                        appointment.appointmentStatus
+                      )}`}
+                    >
+                      {appointment.appointmentStatus}
+                    </button>
                   </td>
                 </tr>
               );
@@ -84,6 +91,7 @@ const Bookings = () => {
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
+              <td className="px-6 py-4">No Data</td>
             </tr>
           )}
         </tbody>
@@ -92,4 +100,4 @@ const Bookings = () => {
   );
 };
 
-export default Bookings;
+export default AppointmentsList;

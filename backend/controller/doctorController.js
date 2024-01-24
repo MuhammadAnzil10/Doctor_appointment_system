@@ -5,7 +5,8 @@ import Doctor from "../model/doctorModel.js";
 import generateDoctorToken from "../utils/doctorToken.js";
 import Slot from "../model/slotModel.js";
 import Appointment from "../model/appointmentModel.js";
-import {formatTime} from '../helpers/doctorHelper.js'
+import { formatTime } from "../helpers/doctorHelper.js";
+import Wallet from "../model/walletModel.js";
 const doctorRegister = asyncHandler(async (req, res) => {
   const {
     name,
@@ -203,7 +204,7 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
   doctor.qualification = req.body.qualification || doctor.qualification;
   doctor.experience = req.body.experience || doctor.experience;
   doctor.specialization = req.body.specialization || doctor.specialization;
-  doctor.consultaionFee = req.body.consultaionFee || doctor.consultaionFee;
+  doctor.consultationFee = req.body.consultationFee || doctor.consultationFee;
 
   if (req.body.password) {
     doctor.password = req.body.password;
@@ -220,12 +221,12 @@ const editDoctorProfile = asyncHandler(async (req, res) => {
 
 const createSlot = asyncHandler(async (req, res) => {
   const { date, startTime, endTime, doctorId } = req.body;
-  const { updatedStartTime ,  updatedEndTime} = formatTime(startTime,endTime)
-  
+  const { updatedStartTime, updatedEndTime } = formatTime(startTime, endTime);
+
   const existingSlot = await Slot.findOne({
     date: new Date(date),
-    startTime:updatedStartTime,
-    endTime:updatedEndTime,
+    startTime: updatedStartTime,
+    endTime: updatedEndTime,
   });
 
   if (existingSlot) {
@@ -236,12 +237,12 @@ const createSlot = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Please select correct time range");
   }
- 
+
   const newSlot = await Slot.create({
     doctor: doctorId,
     date: new Date(date),
-    startTime:updatedStartTime,
-    endTime:updatedEndTime,
+    startTime: updatedStartTime,
+    endTime: updatedEndTime,
   });
   return res.json(newSlot);
 });
@@ -256,16 +257,72 @@ const getSlotsBydate = asyncHandler(async (req, res) => {
 const getDoctorAppointmets = asyncHandler(async (req, res) => {
   const doctorId = req.doctor._id;
 
-  const appointments = await Appointment.find({ doctorId })
-    .populate("userId")
+  const appointments = await Appointment.find({ doctorId }).populate(
+    "userId",
+    "-password -verificationCode"
+  );
+  res.json(appointments);
+});
 
-  const doctorAppointments = appointments.map((appointment) => {
-    appointment.userId.password = "";
-    appointment.userId.verificationCode = "";
+const removeSlot = asyncHandler(async (req, res) => {
+  const { slotId } = req.body;
 
-    return appointment;
-  });
-  res.json(doctorAppointments);
+  if (!slotId) {
+    res.status(400);
+    throw new Error("Please Select Slot");
+  }
+
+  const updatedData = await Slot.deleteOne({ _id: slotId });
+
+  res.status(200).json(updatedData);
+});
+
+const makeAsConsulted = asyncHandler(async (req, res) => {
+  const { appointmentId } = req.body;
+
+  if (!appointmentId) {
+    res.status(400);
+    throw new Error("Please select appointment");
+  }
+
+  const updatedAppointment = await Appointment.findByIdAndUpdate(
+    appointmentId,
+    { appointmentStatus: "Consulted" },
+    { new: true }
+  ).populate("userId", "-password -verificationCode");
+
+  return res.status(200).json(updatedAppointment);
+});
+
+const cancelAppointment = asyncHandler(async (req, res) => {
+  const { appointmentId } = req.body;
+
+  const updatedAppointment = await Appointment.findByIdAndUpdate(
+    appointmentId,
+    { appointmentStatus: "Cancelled" },
+    { new: true }
+  ).populate("userId", "-password -verificationCode");
+
+  if (
+    updatedAppointment.appointmentStatus === "Cancelled" &&
+    updatedAppointment.paymentMethod === "Wallet"
+  ) {
+    const { userId } = updatedAppointment;
+    const userWallet = await Wallet.findOne({ userId: userId._id });
+    if (userWallet) {
+      let totalAmount =
+        Number(userWallet.balance) + Number(updatedAppointment.consultationFee);
+      userWallet.balance = totalAmount;
+      userWallet.transactions.unshift({
+        type: "credit",
+        amount: updatedAppointment.consultationFee,
+        transactionBalance: totalAmount,
+      });
+
+      await userWallet.save();
+    }
+  }
+  return res.json(updatedAppointment);
 });
 
 export {
@@ -280,4 +337,7 @@ export {
   createSlot,
   getSlotsBydate,
   getDoctorAppointmets,
+  removeSlot,
+  makeAsConsulted,
+  cancelAppointment,
 };

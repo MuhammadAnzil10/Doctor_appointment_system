@@ -4,7 +4,7 @@ const Dashboard =()=>{
   
 
   return(
-    <section className="mb-8 sm:mb-16 lg:mb-32 ">
+    <section className="mb-8 sm:mb-16 lg:mb-32 min-h-screen">
     <div className="bg-white-600 container mx-auto">
         <div className="flex justify-around py-8">
 

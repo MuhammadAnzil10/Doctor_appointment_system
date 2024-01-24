@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { useDoctorCreateSlotMutation, useGetSlotsByDatesMutation  } from "../../DoctorSlices/doctorApiSlice.js";
+import {
+  useDoctorCreateSlotMutation,
+  useGetSlotsByDatesMutation,
+  useRemoveSlotMutation,
+} from "../../DoctorSlices/doctorApiSlice.js";
 import { toast } from "react-toastify";
 import { validateSlotForm } from "../../Helpers.js";
 import { CircleLoader } from "react-spinners";
@@ -8,13 +12,15 @@ const Slot = ({ minDate, doctorId }) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [slots, setSlots] = useState([]);
+  const [slotId, setSlotId] = useState("");
   const [slotsDate, setSlotsDate] = useState("");
   const [doctorCreateSlot, { isLoading }] = useDoctorCreateSlotMutation();
-  const [getSlotsByDate] = useGetSlotsByDatesMutation()
+  const [getSlotsByDate] = useGetSlotsByDatesMutation();
+  const [removeSlot] = useRemoveSlotMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+       
     const isValidForm = validateSlotForm(date, startTime, endTime, doctorId);
 
     if (!isValidForm.status) {
@@ -51,10 +57,29 @@ const Slot = ({ minDate, doctorId }) => {
     }
   };
 
+  const handleRemoveSlot = async (e) => {
+    if (!slotId) return toast.warn("Please Select Valid slot");
+
+    try {
+      const response = await removeSlot({ slotId }).unwrap();
+
+      console.log(response);
+      const updateSlot = slots.filter((slot) => {
+        return slot._id !== slotId;
+      });
+
+      setSlots(updateSlot);
+      setSlotId("");
+    } catch (err) {
+      toast.error(err?.data?.message || err?.error);
+    }
+  };
+
+
   return (
     <div className="">
-      <div className="w-full h-full bg-gray-200 p-8 flex items-center justify-center">
-        <div className="w-full h-auto bg-white p-4 rounded-md">
+      <div className="w-full h-full bg-gray-200 p-8 flex items-center flex-col sm:flex-row justify-center">
+        <div className="w-full h-auto bg-white p-4  rounded-md">
           <form onSubmit={handleSubmit}>
             <h2 className="text-2xl font-bold mb-4">Slot Creation</h2>
             <div className="w-full h-auto">
@@ -82,6 +107,9 @@ const Slot = ({ minDate, doctorId }) => {
                 className="w-full p-2 rounded-md bg-gray-100 focus:bg-white"
                 onChange={(e) => setStartTime(e.target.value)}
                 value={startTime}
+                required
+                min='06:00'
+                max='22:00'
               />
             </div>
             <div className="w-full h-auto mt-4">
@@ -107,17 +135,37 @@ const Slot = ({ minDate, doctorId }) => {
             </div>
           </form>
         </div>
-        <div className=" ml-10">
+        <div className=" ml-10 mt-6 sm:mt-0">
           <div className="flex">
-            {slots?.length > 0 &&
-              slots.map((slot, index) => {
-                return (
-                  <span
-                    className=" bg-primary-400 rounded-md m-2 p-4"
-                    key={index}
-                  >{`${slot.startTime} to ${slot.endTime}`}</span>
-                );
-              })}
+            <select
+              name=""
+              id=""
+              className="w-48"
+              value={slotId}
+              onChange={(e) => setSlotId(e.target.value)}
+            >
+              <option value='' className=" text-sm  sm:text-base">Slots</option>
+              {slots?.length > 0 &&
+                slots.map((slot, index) => {
+                  return (
+                    <option
+                      className=" rounded-md m-2 p-4 text-sm  sm:text-base  "
+                      key={index}
+                      value={slot._id}
+                    >
+                      {`${slot.startTime} to ${slot.endTime}`}{" "}
+                    </option>
+                  );
+                })}
+            </select>
+            {slotId && (
+              <span
+                onClick={handleRemoveSlot}
+                className="bg-red-400 m-1 w-4 cursor-pointer  active:bg-red-700 rounded-sm text-center"
+              >
+                X
+              </span>
+            )}
           </div>
 
           <form onSubmit={getSlotsHandler}>

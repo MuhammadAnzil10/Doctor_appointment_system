@@ -8,10 +8,11 @@ import {
 import { useState, useEffect } from "react";
 import { doctorLogout } from "../../DoctorSlices/DoctorAuthSlice.js";
 import { useDispatch } from "react-redux";
+import { CircleLoader } from "react-spinners";
 
 
 const DoctorsLists = () => {
-  const { data: doctors, refetch } = useGetAllDoctorsQuery();
+  const { data: doctors, refetch,isLoading:loading } = useGetAllDoctorsQuery();
   const [blockDoctor] = useBlockDoctorMutation()
   const [unblockDoctor] = useUnBlockDoctorMutation()
   const [verifyDoctor, { isLoading }] = useVerifyDoctorMutation();
@@ -63,8 +64,16 @@ const DoctorsLists = () => {
     }
   }
 
+  if(loading){
+    return (
+      <div className="flex justify-center align-middle mt-96 min-h-screen">
+        <CircleLoader size={50} color="red" />
+      </div>
+    )
+  }
+
   return (
-    <div className="relative overflow-x-auto py-4 px-2 mb-10">
+    <div className="relative overflow-x-auto py-4 px-2 mb-10 min-h-screen">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -127,7 +136,7 @@ const DoctorsLists = () => {
                       </button>
                     ) :(
                       <button
-                        className="bg-green-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-yellow-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                         onClick={(e) => handleClick(doctor._id)}
                       >
                         Verify
@@ -162,6 +171,12 @@ const DoctorsLists = () => {
               >
                 No Data
               </th>
+              <td className="px-6 py-4">No Data</td>
+              <td className="px-6 py-4">No Data</td>
+              <td className="px-6 py-4">No Data</td>
+              <td className="px-6 py-4">No Data</td>
+              <td className="px-6 py-4">No Data</td>
+              <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
             </tr>

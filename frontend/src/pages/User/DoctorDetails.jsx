@@ -16,6 +16,7 @@ const DoctorDetails = () => {
   const [slotId, setSlotId] = useState("");
   const navigate = useNavigate();
   const [getDoctor, { isLoading }] = useUserGetOneDoctorMutation();
+  const [checkedAvailability, setCheckedAvailability] = useState(false)
   const { data, error, refetch } = useGetSlotsByDateQuery({
     date,
     doctorId,
@@ -24,6 +25,7 @@ const DoctorDetails = () => {
 
   const handleClick = (e) => {
     refetch({ date, doctorId });
+    setCheckedAvailability(true)
   };
 
   useEffect(() => {
@@ -44,37 +46,47 @@ const DoctorDetails = () => {
     if (!slotId || !doctorId) {
       return toast.error("Please select Slot");
     }
-
+     
     navigate(`/payment/${slotId}/${doctorId}`);
   };
   const setSlot = async (id) => {
     setSlotId(id);
   };
 
+  if(isLoading){
+    return (
+       <div className="flex justify-center align-middle min-h-screen bg-black ">
+        <CircleLoader color="red" className="my-auto" />
+       </div>
+    )
+    
+  }
+
  
   return (
     <section className="overflow-hidden bg-white py-11 font-poppins dark:bg-gray-800 min-h-screen">
       <div className="max-w-6xl px-4 py-4 mx-auto lg:py-8 md:px-6 ">
-        <div className="flex flex-wrap -mx-4  ">
-          <div className=" px-4 md:w-1/2 h-72  " style={{ width: "14rem" }}>
+        <div className="flex flex-wrap -mx-4 main  ">
+          <div className=" px-4 md:w-1/2 h-72 " style={{ width: "14rem" }}>
             <div className="sticky top-0 z-50 overflow-hidden w-52">
-              <div className="relative mb-6 lg:mb-10 lg:h-2/4   ">
+              <div className="relative mb-6 lg:mb-10 lg:h-2/4 grid grid-cols-1  ">
                 <img
                   src={doctor.images}
-                  alt=""
-                  className="object-cover  lg:h-full h-60 w-52 "
+                  alt="Doctor Image"
+                  className="object-cover  lg:h-full h-60 w-52  "
                 />
+               <Link to={`/chat/${doctorId}`}><button className="mx-auto">Message</button></Link> 
               </div>
             </div>
           </div>
-          <div className="w-full px-4 md:w-1/2 ">
+          <div className="w-full px-4 md:w-1/2 doctorDetails">
             <div className="lg:pl-20">
               <div className="mb-8 ">
                 <span className="text-lg font-medium text-rose-500 dark:text-rose-200">
                   Doctor
                 </span>
                 <h2 className="max-w-xl mt-2 mb-6 text-2xl font-bold dark:text-gray-400 md:text-4xl">
-                  {doctor.name} <span className="font-semibold"> {doctor.experience > 3 ? "Sr" : 'Jr'}</span>
+                  {doctor.name} <span className="font-semibold"> {doctor?.experience > 3 ? ".Sr" : '.Jr'}</span>
                   <span className="text-2xl pl-3 ">({doctor.qualification})</span>
                 </h2>
                 <h2 className="max-w-xl mt-2 mb-6 text-2xl font-bold dark:text-gray-400 ">
@@ -161,7 +173,7 @@ const DoctorDetails = () => {
           </div>
           {doctor?.consultationFee > 0 && (
             <div className="m-4 flex">
-              <div className="grid grid-cols-1  gap-6 ">
+              <div className="grid grid-cols-1  gap-6 slotArea ">
                 <div className="">
                   <input
                     type="date"
@@ -196,7 +208,7 @@ const DoctorDetails = () => {
                           {slot.startTime}
                         </span>
                       ))
-                    ) : (
+                    ) : checkedAvailability && (
                       <span
                         className="noSlotSpan bg-black text-white  rounded-md cursor-pointer hover:bg-gray-500 hover:text-white"
                       >No Slots available</span>

@@ -21,13 +21,15 @@ import {
   confirmPayment,
   makePayment,
   getUserBookings,
-  
   getUserWallet,
   createWalletIntent,
-  confirmWalletPayment
+  confirmWalletPayment,
+  getAllUsers
 } from "../controller/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 const router = express.Router();
+
+
 
 router.post("/register", registerUser);
 router.post("/google-auth", googleAuth);
@@ -55,6 +57,6 @@ router
   router.get('/get-wallet',protect,getUserWallet)
   router.post('/create-wallet-intent',protect,createWalletIntent)
   router.post('/confirm-wallet-payment',protect,confirmWalletPayment)
-
+  // router.get('/get-users',protect,getAllUsers)
 
 export default router;

@@ -19,10 +19,10 @@ const DoctorProfile = () => {
   const [confirmPassword, setConfirmPassowrd] = useState("");
   const [show, setShow] = useState(false);
   const [minDate, setMinDate] = useState("");
-  const [consultaionFee, setConsultaionFee] = useState(0);
+  const [consultationFee, setConsultationFee] = useState(0);
   const dispatch = useDispatch();
   const [updateDoctorProfile, { isLoading }] = useUpdateDoctorProfileMutation();
-  console.log(doctorInfo);
+ 
   useEffect(() => {
     setName(doctorInfo.name);
     setEmail(doctorInfo.email);
@@ -31,7 +31,7 @@ const DoctorProfile = () => {
     setQualification(doctorInfo.qualification);
     setImage(doctorInfo.images);
     setSpecialization(doctorInfo.specialization);
-    setConsultaionFee(doctorInfo.consultaionFee);
+    setConsultationFee(doctorInfo.consultationFee);
     const formattedDate = setTommorrowDate();
     setMinDate(formattedDate);
   }, [doctorInfo]);
@@ -49,9 +49,9 @@ const DoctorProfile = () => {
         qualification,
         experience,
         password,
-        consultaionFee,
+        consultationFee,
       }).unwrap();
-
+   
       dispatch(setDoctorCredential({ ...res }));
       toast.success("Profile Updates successfully");
     } catch (err) {
@@ -70,11 +70,15 @@ const DoctorProfile = () => {
             <div className="grid max-w-2xl mx-auto mt-8">
               <form onSubmit={handleSubmit}>
                 <div className="flex flex-col items-cente justify-center  space-y-5 sm:flex-row sm:space-y-0">
-                  <img
+                  {image ?  (<img
                     className="object-cover w-20 h-20  mx-auto p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
                     src={image}
                     alt="Profile Picture"
-                  />
+                  />): (<img
+                    className="object-cover w-20 h-20  mx-auto p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
+                    src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/2048px-No_image_available.svg.png'
+                    alt="Profile Picture"
+                  />) }
                 </div>
                 <div className="items-center mt-8 sm:mt-14 text-[#202142]">
                   <div className="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6">
@@ -169,11 +173,11 @@ const DoctorProfile = () => {
                     </label>
                     <input
                       type="text"
-                      id="consultaionFee"
+                      id="consultationFee"
                       className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
-                      placeholder="consultaionFee"
-                      value={consultaionFee}
-                      onChange={(e) => setConsultaionFee(e.target.value)}
+                      placeholder="consultationFee"
+                      value={consultationFee}
+                      onChange={(e) => setConsultationFee(e.target.value)}
                     />
                   </div>
                   <div className="mb-2 sm:mb-6">

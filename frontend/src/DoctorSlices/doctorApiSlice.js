@@ -72,6 +72,27 @@ const doctorApiSlice = apiSlice.injectEndpoints({
        url:`${DOCTOR_URL}/appointments`,
        method:"GET"
       })
+    }),
+    removeSlot:builder.mutation({
+      query:(data)=>({
+        url:`${DOCTOR_URL}/remove-slot`,
+        method:"DELETE",
+        body:data
+      })
+    }),
+    makeCosulted : builder.mutation({
+      query:(data)=>({
+          url:`${DOCTOR_URL}/consulted`,
+          method:'PUT',
+          body:data
+      })
+    }),
+    cancelAppointment : builder.mutation({
+      query:(data)=>({
+        url:`${DOCTOR_URL}/cancel-appointment`,
+        method:'PUT',
+        body:data
+      })
     })
   }),
 });
@@ -86,5 +107,8 @@ export const {
   useUpdateDoctorProfileMutation,
   useDoctorCreateSlotMutation,
   useGetSlotsByDatesMutation,
-  useGetAppointmentsQuery
+  useGetAppointmentsQuery,
+  useRemoveSlotMutation,
+  useCancelAppointmentMutation,
+  useMakeCosultedMutation
 } = doctorApiSlice;

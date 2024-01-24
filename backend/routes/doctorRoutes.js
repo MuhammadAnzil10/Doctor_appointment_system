@@ -12,7 +12,10 @@ import {
   editDoctorProfile,
   createSlot,
   getSlotsBydate,
-  getDoctorAppointmets
+  getDoctorAppointmets,
+  removeSlot,
+  makeAsConsulted,
+  cancelAppointment
 } from "../controller/doctorController.js";
 import { doctorProtect } from "../middleware/doctorAuthMiddleware.js";
 
@@ -26,5 +29,8 @@ router.post('/create-slot',doctorProtect,createSlot)
 router.post('/slots',doctorProtect,getSlotsBydate)
 router.route('/doctor-profile').get(doctorProtect,getDoctorProfile).put(doctorProtect,editDoctorProfile)
 router.get('/appointments',doctorProtect,getDoctorAppointmets)
+router.delete('/remove-slot',doctorProtect,removeSlot)
+router.put('/consulted',doctorProtect,makeAsConsulted)
+router.put('/cancel-appointment',doctorProtect,cancelAppointment)
 
 export default router;

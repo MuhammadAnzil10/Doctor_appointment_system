@@ -7,6 +7,7 @@ import generateMail from "../utils/generateMail.js";
 import Specialization from "../model/specialization.js";
 import Doctor from "../model/doctorModel.js";
 import generateVerificationMail from "../utils/generateVerificationMail.js";
+import Appointment from "../model/appointmentModel.js";
 
 const adminLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -278,6 +279,18 @@ const editAdminProfile = asyncHandler(async (req, res) => {
   res.json(rest);
 });
 
+const getAppointments = asyncHandler(async (req, res) => {
+  const appointments = await Appointment.find()
+    .populate("userId", "-password")
+    .populate({
+      path: "doctorId",
+      populate: {
+        path: "specialization",
+      },
+    });
+  return res.status(200).json(appointments);
+});
+
 export {
   adminLogin,
   adminLogout,
@@ -295,4 +308,5 @@ export {
   unBlockDoctor,
   getAdminProfile,
   editAdminProfile,
+  getAppointments,
 };

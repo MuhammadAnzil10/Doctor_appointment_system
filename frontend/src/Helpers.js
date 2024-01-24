@@ -21,8 +21,8 @@ export const doctorFormValidation = (data) => {
   const experienceRegex = /^[0-9]+$/;
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-console.log(specialization.length);
-console.log(cloudImage.length);
+  console.log(specialization.length);
+  console.log(cloudImage.length);
   if (!nameRegex.test(name)) {
     return {
       status: false,
@@ -46,18 +46,23 @@ console.log(cloudImage.length);
     return { status: false, message: "Please provide valid Qualification" };
   } else if (!experienceRegex.test(experience)) {
     return { status: false, message: "Please provide valid Year" };
-  }  else if (specialization.trim() === '' || cloudImage.trim() === '') {
+  } else if (specialization.trim() === "") {
     return {
       status: false,
       message: "Please Provide valid Image and specialization ",
     };
+  } else if (cloudImage.trim() === "") {
+    return { status: false, message: "please upload image " };
   } else if (!passwordRegex.test(password)) {
     return {
       status: false,
       message: "Please provide valid Password(Min Length 8)",
     };
   } else {
-    return true;
+    return {
+      status: true,
+      message: "Submitted",
+    };
   }
 };
 
@@ -116,6 +121,7 @@ export const userRegisterValidation = (data) => {
 };
 
 export const sort = (filtered, sortOrder) => {
+
   const sorted = filtered.sort((a, b) => {
     if (sortOrder === "Asc") {
       return a.name.localeCompare(b.name);
@@ -134,28 +140,57 @@ export const filter = (itemsPerPage, currentPage, filteredDoctors) => {
   return { currentItems, indexOfLastItem };
 };
 
-
-
-export const validateSlotForm =(date,startTime,endTime)=>{
- 
-  if(date === ''){
-    return{status:false, message:"Please Provide Date"}
+export const validateSlotForm = (date, startTime, endTime) => {
+  if (date === "") {
+    return { status: false, message: "Please Provide Date" };
+  } else if (startTime === "") {
+    return { status: false, message: "Please Provide Start Time" };
+  } else if (endTime === "") {
+    return { status: false, message: "Please Provide End Time" };
+  } else if (startTime > endTime) {
+    return { status: false, message: "Please Provide Correct time range" };
+  } else if (!areTimes30MinutesApart(startTime, endTime)) {
+    return { status: false, message: "Please Select time gap 30 min atleast" };
+  } else {
+    return { status: true };
   }
-  else if(startTime === ''){
-    return{status:false, message:"Please Provide Start Time"}
-  }else if(endTime === ''){
-    return{status:false, message:"Please Provide End Time"}
-  }else if(startTime > endTime){
-    return{status:false, message:"Please Provide Correct time range"}
-  }else{
-    return {status:true}
-  }
-}
+};
 
-export const setTommorrowDate =()=>{
+export const setTommorrowDate = () => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const formattedTime = tomorrow.toISOString().split("T")[0];
 
-  return formattedTime
+  return formattedTime;
+};
+
+function areTimes30MinutesApart(time1, time2) {
+  const [hours1, minutes1] = time1.split(":").map(Number);
+  const [hours2, minutes2] = time2.split(":").map(Number);
+
+  const totalMinutes1 = hours1 * 60 + minutes1;
+  const totalMinutes2 = hours2 * 60 + minutes2;
+
+  const timeDifference = Math.abs(totalMinutes1 - totalMinutes2);
+  console.log(timeDifference);
+
+  return timeDifference === 30;
 }
+
+export const getStatusColor = (appointmentStatus) => {
+  if (!appointmentStatus) return "";
+  return appointmentStatus === "Consulted"
+    ? "bg-green-400"
+    : appointmentStatus === "Cancelled"
+    ? "bg-red-400"
+    : "bg-yellow-400";
+};
+
+export const filterData = (data, searchText) => {
+  return data.filter((item) => {
+    const match = item.name === '' || item.name
+      .toLowerCase()
+      .includes(searchText.toLocaleLowerCase());
+    return match;
+  });
+};

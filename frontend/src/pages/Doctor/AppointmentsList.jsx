@@ -1,15 +1,54 @@
-
 import { useEffect, useState } from "react";
-import { useGetAppointmentsQuery } from "../../DoctorSlices/doctorApiSlice";
+import {
+  useGetAppointmentsQuery,
+  useCancelAppointmentMutation,
+  useMakeCosultedMutation,
+} from "../../DoctorSlices/doctorApiSlice";
+import { toast } from "react-toastify";
 const AppointmentsList = () => {
   const { data, isLoading, error, refetch } = useGetAppointmentsQuery();
   const [appointments, setAppointments] = useState(data || []);
-console.log(data);
+  const [makeConsulted] = useMakeCosultedMutation();
+  const [cancelAppointment] = useCancelAppointmentMutation();
+  // const [appointmentAction, setAppointmentAction] = useState('')
+
   useEffect(() => {
     refetch();
     if (data) setAppointments(data);
   }, [data]);
-  console.log(appointments);
+
+  const handleConsultation = async (appointmentId) => {
+ 
+
+    if (!appointmentId) {
+      return toast.error("Please select appointment");
+    }
+
+    try {
+      const response = await makeConsulted({ appointmentId }).unwrap();
+      refetch();
+      toast.success("Appointment Consulted");
+    } catch (err) {
+      return toast.error(err?.data?.message || err.error);
+    }
+  };
+
+  const cancelConsultaion =async (appointmentId) => {
+    if(!appointmentId){
+      return toast.error("Select an appointment to Cancel")
+    }
+
+    try {
+
+      const response = await cancelAppointment({appointmentId}).unwrap()
+      refetch();
+      toast.warning(`Appointment has been canceled`);
+    } catch (err) {
+      toast.error(err?.data?.message || err?.error)
+    }
+
+   
+  };
 
   return (
     <div className="relative overflow-x-auto py-4 px-2 mb-10 min-h-screen">
@@ -37,6 +76,9 @@ console.log(data);
             <th scope="col" className="px-6 py-3">
               Status
             </th>
+            <th scope="col" className="px-6 py-3 text-center">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -54,17 +96,34 @@ console.log(data);
                     {index + 1}
                   </th>
                   <td className="px-6 py-4">{appointment.userId.name}</td>
-                  <td className="px-6 py-4">
-                    {appointment.userId.phone}
-                  </td>
-                  <td className="px-6 py-4">
-                    {appointment.userId.age}
-                  </td>
+                  <td className="px-6 py-4">{appointment.userId.phone}</td>
+                  <td className="px-6 py-4">{appointment.userId.age}</td>
                   <td className="px-6 py-4">
                     {appointment.appointmentDate.split("T")[0]}
                   </td>
                   <td className="px-6 py-4">{appointment.appointmentTime}</td>
-                  <td className="px-6 py-4">Pending</td>
+                  <td className="px-6 py-4">{appointment.appointmentStatus}</td>
+                  <td className="px-6 py-4 flex justify-around ">
+                    {appointment?.appointmentStatus === "Consulted" ? (
+                      <button className="bg-green-400">Consulted</button>
+                    ) : appointment?.appointmentStatus === "Cancelled" ? (
+                      <button className="bg-red-400">Cancelled</button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={(e) => handleConsultation(appointment._id)}
+                        >
+                          Consulted
+                        </button>
+                        <button
+                          onClick={(e) => cancelConsultaion(appointment._id)}
+                          className="bg-red-600"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </td>
                 </tr>
               );
             })
@@ -76,6 +135,7 @@ console.log(data);
               >
                 No Data
               </th>
+              <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>

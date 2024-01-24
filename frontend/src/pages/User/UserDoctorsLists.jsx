@@ -5,6 +5,7 @@ import {
 } from "../../UserSlices/usersApiSlice";
 import { useState, useEffect } from "react";
 import { filter, sort } from "../../Helpers";
+import PaginationButtons from "../../components/PaginationButtons";
 
 const UserDoctorsLists = () => {
   const [searchText, setSearchText] = useState("");
@@ -85,7 +86,7 @@ const UserDoctorsLists = () => {
           <option value="Desc">Sort Z-A</option>
         </select>
       </div>
-      <div className=" p-6 grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-6 ">
+      <div className=" p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 ">
         {currentItems.length > 0 ? (
           currentItems.map((doctor, index) => (
             <DoctorCards {...doctor} key={index} />
@@ -94,7 +95,7 @@ const UserDoctorsLists = () => {
           <h1>No data</h1>
         )}
       </div>
-      <div className="flex justify-center mt-4">
+      {/* <div className="flex justify-center mt-4">
         <button
           onClick={(e) => setCurrentPage(currentPage - 1)}
           disabled={currentPage === 1}
@@ -116,7 +117,8 @@ const UserDoctorsLists = () => {
         >
           Next
         </button>
-      </div>
+      </div> */}
+      <PaginationButtons setCurrentPage={setCurrentPage} indexOfLastItem={indexOfLastItem} currentPage={currentPage} filteredDoctors={filteredDoctors} />
     </div>
   );
 };

@@ -51,6 +51,8 @@ import NotFound from "./pages/Not Found/NotFound.jsx";
 import Bookings from "./pages/User/Bookings.jsx";
 import AppointmentsList from "./pages/Doctor/AppointmentsList.jsx";
 import WalletPage from "./pages/User/WalletPage.jsx";
+import Chat from "./pages/User/Chat.jsx";
+import DoctorAppointments from './pages/Admin/AppointmentLists.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -74,6 +76,7 @@ const router = createBrowserRouter(
           <Route path="/payment/:slotId/:doctorId" element={<PaymentPage />} />
           <Route path="/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/bookings" element={<Bookings />} />
+          <Route path="/chat/:doctorId" element={<Chat />} />
         </Route>
       </Route>
 
@@ -92,6 +95,7 @@ const router = createBrowserRouter(
         <Route path="/admin/specializations" element={<SpecializationList />} />
         <Route path="/admin/specialization" element={<Specialization />} />
         <Route path="/admin/doctors" element={<DoctorsLists />} />
+        <Route path="/admin/appointments" element={<DoctorAppointments />} />
       </Route>
 
       {/* Doctor Routes */}

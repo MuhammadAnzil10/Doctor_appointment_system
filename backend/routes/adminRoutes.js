@@ -15,7 +15,8 @@ import {
   blockDoctor,
   unBlockDoctor,
   getAdminProfile,
-  editAdminProfile
+  editAdminProfile,
+  getAppointments
 } from "../controller/adminController.js";
 import { adminProtect } from "../middleware/adminAuthMiddleware.js";
 const router = express.Router();
@@ -35,5 +36,6 @@ router.put('/verify-doctor/:id',adminProtect,verifyDoctor)
 router.put('/block-doctor/:id',adminProtect,blockDoctor)
 router.put('/unblock-doctor/:id',adminProtect,unBlockDoctor)
 router.route('/admin-profile').get(adminProtect,getAdminProfile).put(adminProtect,editAdminProfile)
+router.route('/appointments').get(adminProtect,getAppointments)
 
 export default router;

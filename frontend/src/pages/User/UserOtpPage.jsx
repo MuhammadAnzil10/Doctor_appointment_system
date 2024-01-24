@@ -13,7 +13,7 @@ import { ToastContainer } from "react-toastify";
 
 const UserOtpPage = () => {
   const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
-  const [resendOtp, { otpIsLoding }] = useResendOtpMutation();
+  const [resendOtp] = useResendOtpMutation();
   const [resetPasswordOtpVerify] = useResetPasswordOtpMutation()
   const [otp, setOtp] = useState([]);
   const [countDown, setCountDown] = useState(60);

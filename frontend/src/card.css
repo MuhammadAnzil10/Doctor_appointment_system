@@ -26,20 +26,31 @@ form > * {
 button {
   background-color: var(--accent-color);
 }
-.btn{
+.btn {
   width: 10rem;
   height: 3rem;
   margin: 0px;
 }
 
+@media only screen and (max-width: 600px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .doctorDetails{
+  
+    margin-top: 2rem;
+  }
+}
 
-
-.spanBtn{
+.spanBtn {
   height: 3rem;
   width: 6rem;
   padding: 10px;
 }
-.noSlotSpan{
+.noSlotSpan {
   width: 5rem;
   height: 4rem;
   padding: 10px;
@@ -68,7 +79,7 @@ button:disabled {
   opacity: 0.5;
   cursor: none;
 }
-.isActive{
+.isActive {
   background-color: red;
 }
 

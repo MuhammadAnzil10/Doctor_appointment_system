@@ -52,7 +52,9 @@ const DoctorRegistration = () => {
       password,
       cloudImage,
     })
+    console.log(status);
     if (!status) {
+    
       return toast(message);
     }
 
