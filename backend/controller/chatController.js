@@ -3,48 +3,57 @@ import Chat from "../model/chatModel.js";
 import User from "../model/userModel.js";
 
 const accessChat = asyncHandler(async (req, res) => {
-  const userId = req.body.userId;
+  const { userId, doctorId } = req.body;
 
   let isChat = await Chat.find({
     $and: [
-      { users: { $elemMatch: { $eq: req.user._id } } },
-      { users: { $elemMatch: { $eq: userId } } },
+      { user: userId },
+      { doctor: doctorId},
     ],
   })
-    .populate("users", "-pasword")
+    .populate("user doctor", "-password -verificationCode")
     .populate("latestMessage");
- 
+
   isChat = await User.populate(isChat, {
     path: "latestMessage.sender",
     select: "name email",
   });
 
   if (isChat.length > 0) {
-   return res.status(200).json(isChat[0]);
+  
+    return res.status(200).json(isChat[0]);
   } else {
     let chatData = {
       chatName: "sender",
-      users: [req.user._id, userId],
+      user: userId,
+      doctor: doctorId,
     };
     const chat = await Chat.create(chatData);
 
     const fullChat = await Chat.findOne({ _id: chat._id }).populate(
-      "users",
-      '-password'
-    )
+      "user doctor",
+      "-password"
+    );
 
-   return res.status(201).json(fullChat);
+    return res.status(201).json(fullChat);
   }
 });
 
 const getChats = asyncHandler(async (req, res) => {
-  const chats = await Chat.find({
-    users: { $elemMatch: { $eq: req.user._id } },
-  })
-    .populate("users", "-password")
+  const {userId} = req.params
+  const userType = req.query.type;
+ 
+  let query = {}
+  if(userType === 'user'){
+     query={user : userId}
+  }else if(userType === 'doctor') {
+       query= {doctor : userId}
+  }
+  const chats = await Chat.find(query)
+    .populate("user doctor", "-password -verificationCode")
     .populate("latestMessage")
     .sort({ updatedAt: -1 });
-
+  
   const results = await User.populate(chats, {
     path: "latestMessage.sender",
     select: "name email",

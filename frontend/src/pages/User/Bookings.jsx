@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import chatImage from '../../assets/images/chat-box.png'
 import { useGetUserBookingsQuery } from "../../UserSlices/usersApiSlice";
 
 const Bookings = () => {
@@ -9,12 +11,11 @@ const Bookings = () => {
     refetch();
     if (data) setBookings(data);
   }, [data]);
-  console.log(bookings);
 
   return (
     <div className="relative overflow-x-auto py-4 px-2 mb-10 min-h-screen">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <thead className="text-xs text-center text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
               Sl.No
@@ -36,10 +37,9 @@ const Bookings = () => {
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-center">
           {bookings && bookings.length > 0 ? (
             bookings?.map((booking, index) => {
-              console.log(booking.appointmentStatus);
               return (
                 <tr
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
@@ -61,11 +61,11 @@ const Bookings = () => {
                   <td className="px-6 py-4">{booking.appointmentTime}</td>
                   <td className="px-6 py-4">
                     {booking?.appointmentStatus === "Cancelled" ? (
-                      <button className="bg-red-400">Cancelled</button>
+                      <button className="bg-red-400 mx-auto">Cancelled</button>
                     ) : booking?.appointmentStatus === "Consulted" ? (
-                      <button className="bg-green-400">Consulted</button>
+                      <button className="bg-green-400 mx-auto">Consulted</button>
                     ) : (
-                      <button className="bg-yellow-400">Pending</button>
+                      <button className="bg-yellow-400 mx-auto">Pending</button>
                     )}
                   </td>
                 </tr>
@@ -79,6 +79,7 @@ const Bookings = () => {
               >
                 No Data
               </th>
+              <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>
               <td className="px-6 py-4">No Data</td>

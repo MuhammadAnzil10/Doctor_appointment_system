@@ -106,7 +106,7 @@ const WalletPage = () => {
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    {transatction._id}
+                    {transatction._id.slice(-7)}
                   </th>
                   <td className="px-6 py-4">
                     {transatction.date.split("T")[0]}

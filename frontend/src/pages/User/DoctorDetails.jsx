@@ -75,7 +75,6 @@ const DoctorDetails = () => {
                   alt="Doctor Image"
                   className="object-cover  lg:h-full h-60 w-52  "
                 />
-               <Link to={`/chat/${doctorId}`}><button className="mx-auto">Message</button></Link> 
               </div>
             </div>
           </div>

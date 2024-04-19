@@ -37,15 +37,39 @@ const server = app.listen(port, () => {
 
 const io = new Server(server, {
   pingTimeout: 60000,
+  cors: {
+    origin: "http://localhost:3000",
+  },
 });
 
 io.on("connection", (socket) => {
-  console.log("connrcted to socket.io");
-  socket.on("get", (data) => {
-    console.log("helloo", data);
+  console.log("connected to socket.io");
+
+  socket.on("setup", (userData) => {
+    console.log("socket", userData);
+    socket.join(userData._id);
+    socket.emit("connected");
   });
- 
 
- 
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+  });
+
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+  socket.on("new message", (newMessageRecieved) => {
+    var chat = newMessageRecieved.chat;
+    // if (!chat.users) return console.log("chat.users not defined");
+
+    if (chat?.user?._id === newMessageRecieved.sender._id)
+      socket.in(chat?.doctor?._id).emit("message recieved", newMessageRecieved);
+    else if (chat?.doctor?._id === newMessageRecieved.sender._id)
+      socket.in(chat?.user?._id).emit("message recieved", newMessageRecieved);
+  });
+  socket.off("setup", () => {
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id);
+  });
 });
-

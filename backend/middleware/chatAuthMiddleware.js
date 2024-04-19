@@ -2,19 +2,23 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../model/userModel.js";
 
-const protect = asyncHandler(async (req, res, next) => {
-  let token = req.cookies.jwt;
+const chatAuth = asyncHandler(async (req, res, next) => {
+  let user = req?.cookies?.jwt;
+  let doctor = req?.cookies?.doctorToken
    
-  if (token) {
+  if (user) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      req.user = await User.findById(decoded.userId).select("-password");
+      if(decoded)
       next();
     } catch (error) {
       res.status(401);
       throw new Error("Not authorized, invalid token");
     }
+  }else if(doctor){
+    const decoded = jwt.verify(doctor, process.env.DOCTOR_JWT_SECRET);
+    if(decoded)
+    next();
   } else {
     res.status(401);
     throw new Error("Not Authorised, no token");

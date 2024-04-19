@@ -3,45 +3,57 @@ import Message from "../model/messageModel.js";
 import User from "../model/userModel.js";
 import Chat from "../model/chatModel.js";
 
-const sendMessage = asyncHanlder(async (req,res) => {
-  const { content, chatId } = req.body;
-  if (!content || !chatId){
-    res.status(400)
+const sendMessage = asyncHanlder(async (req, res) => {
+  const { content, chatId, userId, senderModel } = req.body;
+  console.log(req.body);
+  if (!content || !chatId) {
+    res.status(400);
     throw new Error("Missing fields");
   }
 
-  let newMessage ={
-    sender:req.user_id,
+  let newMessage = {
+    sender: userId,
     content,
-    chat:chatId
-    
-  }
+    chat: chatId,
+    senderModel,
+  };
 
-  let message = await Message.create(newMessage)
+  let message = await Message.create(newMessage);
 
-  message = await message.populate('sender','name ')
-  message = await message.populate('chat')
-  message = await User.populate(message,{
-    path:'chat.user',
-    select:'name email'
-  })
+  message = await message.populate("sender", "name ");
+  message = await message.populate({
+    path: "chat",
+    populate: {
+      path: "doctor",
+      select: "-password -verificationCode",
+    },
+  });
 
-  await Chat.findByIdAndUpdate(req.body.chatId,{
-    latestMessage:message,
-  })
+  message = await User.populate(message, {
+    path: "chat.user",
+    select: "name email",
+  });
 
-  res.status(200).json(message); 
+  await Chat.findByIdAndUpdate(req.body.chatId, {
+    latestMessage: message,
+  });
 
-   
+  res.status(200).json(message);
 });
 
-const allMessage = asyncHanlder(async(req,res)=>{
+const allMessage = asyncHanlder(async (req, res) => {
+  const chatId = req.params.chatId;
+  let messages = await Message.find({ chat: chatId })
+    .populate("sender", "name email")
+    .populate({
+      path: "chat",
+      populate: {
+        path: "doctor",
+        select: "name email images",
+      },
+    });
 
-
-const chatId = req.params.chatId;
-let messagess=await Message.find({chat:chatId}).populate('sender','name email').populate('chat')
-
-res.status(200).json(messagess) 
-})
+  res.status(200).json(messages);
+});
 
 export { sendMessage, allMessage };
